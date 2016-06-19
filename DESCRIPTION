@@ -1,0 +1,14 @@
+Package: ccf
+Type: Package
+Title: Canonical Correlation Forest
+Version: 0.1.0
+Authors@R: person("Janosch", "Dobler", email = "janosch.dobler@gmail.com", role = c("aut", "cre"))
+Description: Implementation of Canonical Correlation Forests (CCF) based on the
+    paper (TODO) and the MATLAB Implementation of Tom Rainforth (TODO bitbucketrepo)
+License: TODO
+URL: http://github.com/jandob/ccf, http://bitbucket.org/twgr/ccf
+BugReports: https://github.com/jandob/ccf/issues
+LazyData: TRUE
+RoxygenNote: 5.0.1
+Suggests: testthat,
+    ggplot2
