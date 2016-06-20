@@ -32,5 +32,7 @@ predict.canonical_correlation_forest = function(model, newdata) {
   cat("\rmajority vote done\n")
   return(treePredictions)
 }
-
-plot.canonical_correlation_forest = plot.canonical_correlation_tree
+#' @export
+plot.canonical_correlation_forest = function(...) {
+  ccf::plot.canonical_correlation_tree
+}

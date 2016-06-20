@@ -201,7 +201,7 @@ predict.canonical_correlation_tree = function(model, newData){
   }
   return(currentNodeClasses)
 }
-
+#' @export
 plot.canonical_correlation_tree = function(tree, X, Y) {
   TODO("check if plotable", return = T)
   plot_decision_surface(tree, X, Y)

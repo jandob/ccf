@@ -1,6 +1,6 @@
 # alternative
 #cca = cancor(X, as.matrix(Y))
-
+#' @export
 canonical_correlation_analysis = function(X, Y, epsilon=1e-4) {
   # CCA will find pairs of vectors (w,v) such that projections Xw and Yv have
   # maximal possible correlations (the pairs will be ordered in the order of
