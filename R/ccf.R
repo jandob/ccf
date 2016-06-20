@@ -34,5 +34,5 @@ predict.canonical_correlation_forest = function(model, newdata) {
 }
 #' @export
 plot.canonical_correlation_forest = function(...) {
-  ccf::plot.canonical_correlation_tree
+  plot.canonical_correlation_tree(...)
 }
