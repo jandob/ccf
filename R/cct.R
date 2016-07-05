@@ -14,6 +14,7 @@ setupLeaf = function(Y) {
   ))
 
 }
+#' @importFrom utils head tail
 find_best_split = function(X, Y) {
   numberOfProjectionDirections = ncol(X)
   splitGains = matrix(NA, numberOfProjectionDirections, 1)
@@ -32,7 +33,7 @@ find_best_split = function(X, Y) {
     # count the number of classes that occur in the partition where X < split_point
     # e.g. for split_point = 72: (2 red, 2 blue, 1 green)
     LeftCumCounts = apply(Ysorted, 2, cumsum)
-    total_counts = tail(LeftCumCounts,1)
+    total_counts = utils::tail(LeftCumCounts,1)
     # Do the same for X > split_point. We can just substract each row from total_counts
     RightCumCounts = sweep(LeftCumCounts, MARGIN = 2, total_counts, FUN = '-')*-1
     #RightCumCounts = t(apply(LeftCumCounts, 1, function(x) {totalCounts - x})) # todo this is slow
@@ -49,7 +50,7 @@ find_best_split = function(X, Y) {
     pRProd[pR == 0] = 0
     metricRight = -apply(pRProd, 1, sum)
 
-    metricCurrent = tail(metricLeft, 1)
+    metricCurrent = utils::tail(metricLeft, 1)
     metricLeft[!uniquePoints] = Inf
     metricRight[!uniquePoints] = Inf
     N = nrow(X)
@@ -58,7 +59,7 @@ find_best_split = function(X, Y) {
                                  ) / N
 
     # sample from equally best splits
-    metricGainWOLast = head(metricGain, -1)
+    metricGainWOLast = utils::head(metricGain, -1)
     maxGain = max(metricGainWOLast)
     #metricGainWOLast[3]=metricGainWOLast[2]
 
@@ -174,8 +175,8 @@ canonical_correlation_tree = function(X, Y, depth = 0, options = list(minPointsF
 }
 
 #' @export
-predict.canonical_correlation_tree = function(model, newData){
-  tree = model
+predict.canonical_correlation_tree = function(object, newData, ...){
+  tree = object
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
   X = as.matrix(newData[,1:nr_of_features], ncol = nr_of_features)
@@ -202,7 +203,7 @@ predict.canonical_correlation_tree = function(model, newData){
   return(currentNodeClasses)
 }
 #' @export
-plot.canonical_correlation_tree = function(tree, X, Y) {
+plot.canonical_correlation_tree = function(x, dataX, dataY, ...) {
   TODO("check if plotable", return = T)
-  plot_decision_surface(tree, X, Y)
+  plot_decision_surface(x, dataX, dataY)
 }
