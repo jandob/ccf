@@ -68,6 +68,7 @@ generate_2d_data_plot = function(data = NULL,
 
   return(g)
 }
+#' @importFrom stats predict
 plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...) {
   data = data.frame(x = X[,1], y = X[,2], z = Y)
 
@@ -87,8 +88,9 @@ plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...
                                       title = title)
   return(plot_object)
 }
+#' @importFrom stats predict
 get_missclassification_rate = function(model, data_test, ...) {
-  predictions = as.matrix(predict(model, data_test, ...))
+  predictions = as.matrix(stats::predict(model, data_test, ...))
   # TODO use formula instead of last column
   actual = data_test[,ncol(data_test)]
   return(mean(actual != predictions))

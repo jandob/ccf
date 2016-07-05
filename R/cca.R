@@ -1,14 +1,29 @@
-# alternative
-#cca = cancor(X, as.matrix(Y))
+#' CCA will find pairs of vectors \eqn{(w,v)} such that projections \eqn{Xw} and \eqn{Yv} have
+#' maximal possible correlations (the pairs will be ordered in the order of
+#' decreasing correlations). Projection vectors are normalized such that the
+#' variance of \eqn{Xw} and of \eqn{Yv} is equal to \eqn{1}. This means that projections are
+#' not only correlated, but "on the same scale" and hence can be directly
+#' compared.
+#'
+#' @param X numeric matrix (n * p) wiht n observations of p variables
+#' @param Y muneric matrix (n * q) wiht n observations of q variables
+#' @param epsilon numeric scalar tolerance for rank reduction of the
+#' input matrices
+#' @return A list containing the following components
+#'         xcoef estimated estimated coefficients for the X variables.
+#'         ycoef estimated estimated coefficients for the X variables.
+#'         cor matrix of correlations
+#'
+#' @examples
+#' library(MASS)
+#' library(pracma)
+#' X = mvrnorm(1000, c(0,0), eye(2))
+#' cca = canonical_correlation_analysis(X, X)
+#'
 #' @export
 canonical_correlation_analysis = function(X, Y, epsilon=1e-4) {
-  # CCA will find pairs of vectors (w,v) such that projections Xw and Yv have
-  # maximal possible correlations (the pairs will be ordered in the order of
-  # decreasing correlations). Projection vectors are normalized such that the
-  # variance of Xw and of Yv is equal to 1. This means that projections are
-  # not only correlated, but "on the same scale" and hence can be directly
-  # compared.
-  # Output: the nth pair of canonical coefficients (w,v) is (A[,n], B[,n])
+  # alternative
+  #cca = cancor(X, as.matrix(Y))
 
   #X = as.matrix(X)
   #Y = as.matrix(Y)

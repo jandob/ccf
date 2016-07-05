@@ -88,6 +88,29 @@ find_best_split = function(X, Y) {
   lessThanPartPoint = X <= partitionPoint
   return(list(partitionPoint = partitionPoint, splitDir = splitDir, gain = maxGain, lessThanPartPoint = lessThanPartPoint))
 }
+#' Creates a canonical correlation tree.
+#'
+#' @param X numeric matrix (n * p) wiht n observations of p variables
+#' @param Y muneric matrix (n * q) wiht n observations of q variables
+#' @param depth The subtree depth
+#' @param options list containing the following options for the tree
+#' construction:
+#'      minPointsForSplit if the number of datapoints is smaller than
+#'        this value, a leaf is constructed
+#'      maxDepthSplit if the current depth is grater than
+#'        this value, a leaf is constructed
+#'
+#' @return returns an object of class "canonical_correlation_tree",
+#' where an object of class  "canonical_correlation_tree" is a list
+#' containing at the following components:
+#'    isLeaf boolean wether the tree is a leaf
+#'    trainingCounts number of training examples this tree got (ncol(X))
+#'    iIn feature indices that the node got, needed for prediction
+#'    decisionProjection numeric matrix The projection matrix that was
+#'      used to find the best split point
+#'    lessthanChild Reference to the left subtree
+#'    greaterthanChild Reference to the right subtree
+#'
 #' @export
 canonical_correlation_tree = function(X, Y, depth = 0, options = list(minPointsForSplit = 2, maxDepthsplit = Inf)) {
   #X = as.matrix(X)
