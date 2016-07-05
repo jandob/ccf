@@ -1,3 +1,5 @@
+#' Canonical Correlation Analysis
+#'
 #' CCA will find pairs of vectors \eqn{(w,v)} such that projections \eqn{Xw} and \eqn{Yv} have
 #' maximal possible correlations (the pairs will be ordered in the order of
 #' decreasing correlations). Projection vectors are normalized such that the
@@ -10,9 +12,9 @@
 #' @param epsilon numeric scalar tolerance for rank reduction of the
 #' input matrices
 #' @return A list containing the following components
-#'         xcoef estimated estimated coefficients for the X variables.
-#'         ycoef estimated estimated coefficients for the X variables.
-#'         cor matrix of correlations
+#'         \item{xcoef}{Estimated estimated coefficients for the X variables.}
+#'         \item{ycoef}{Estimated estimated coefficients for the X variables.}
+#'         \item{cor}{Matrix of correlations.}
 #'
 #' @examples
 #' library(MASS)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ccf.R
 \name{canonical_correlation_forest}
 \alias{canonical_correlation_forest}
-\title{Generic function for creating canonical correlation forests.}
+\title{Canonical Correlation Forest}
 \usage{
 canonical_correlation_forest(x, ...)
 }

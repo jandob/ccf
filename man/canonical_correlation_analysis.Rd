@@ -2,12 +2,7 @@
 % Please edit documentation in R/cca.R
 \name{canonical_correlation_analysis}
 \alias{canonical_correlation_analysis}
-\title{CCA will find pairs of vectors \eqn{(w,v)} such that projections \eqn{Xw} and \eqn{Yv} have
-maximal possible correlations (the pairs will be ordered in the order of
-decreasing correlations). Projection vectors are normalized such that the
-variance of \eqn{Xw} and of \eqn{Yv} is equal to \eqn{1}. This means that projections are
-not only correlated, but "on the same scale" and hence can be directly
-compared.}
+\title{Canonical Correlation Analysis}
 \usage{
 canonical_correlation_analysis(X, Y, epsilon = 1e-04)
 }
@@ -21,9 +16,9 @@ input matrices}
 }
 \value{
 A list containing the following components
-        xcoef estimated estimated coefficients for the X variables.
-        ycoef estimated estimated coefficients for the X variables.
-        cor matrix of correlations
+        \item{xcoef}{Estimated estimated coefficients for the X variables.}
+        \item{ycoef}{Estimated estimated coefficients for the X variables.}
+        \item{cor}{Matrix of correlations.}
 }
 \description{
 CCA will find pairs of vectors \eqn{(w,v)} such that projections \eqn{Xw} and \eqn{Yv} have

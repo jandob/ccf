@@ -2,28 +2,30 @@
 % Please edit documentation in R/ccf.R
 \name{canonical_correlation_forest.default}
 \alias{canonical_correlation_forest.default}
-\title{Defaultf S3 method.}
+\title{Canonical Correlation Forest}
 \usage{
-\method{canonical_correlation_forest}{default}(X, Y_one_hot,
-  nr_of_trees = 200)
+\method{canonical_correlation_forest}{default}(x, Y_one_hot,
+  nr_of_trees = 200, ...)
 }
 \arguments{
-\item{X}{numeric matrix (n * p) with n observations of p variables}
+\item{x}{numeric matrix (n * p) with n observations of p variables}
 
 \item{Y_one_hot}{muneric matrix with n observations of q variables
 (one_hot_encoded)}
 
 \item{nr_of_trees}{nr of trees the forest will be composed of}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \value{
 returns an object of class "canonical_correlation_forest",
-where an object of class "canonical_correlation_forest" is a list
-containing the following components:
-   X,Y_one_hot The original input data
-   forest a vector of length nr_of_trees with objects of class
-   "canonical_correlation_tree"
+where an object of this class is a list containing the following
+components:
+  \item{X,Y_one_hot}{The original input data}
+  \item{forest}{a vector of length nr_of_trees with objects of class
+   "canonical_correlation_tree"}
 }
 \description{
-Defaultf S3 method.
+Default S3 method for canonical_correlation_forest.
 }
 

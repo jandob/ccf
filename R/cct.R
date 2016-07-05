@@ -95,24 +95,26 @@ find_best_split = function(X, Y) {
 #' @param depth The subtree depth
 #' @param options list containing the following options for the tree
 #' construction:
-#'      minPointsForSplit if the number of datapoints is smaller than
-#'        this value, a leaf is constructed
-#'      maxDepthSplit if the current depth is grater than
-#'        this value, a leaf is constructed
-#'
+#' \describe{
+#'    \item{minPointsForSplit}{If the number of datapoints is smaller than
+#'        this value, a leaf is constructed.}
+#'    \item{maxDepthSplit}{If the current depth is grater than
+#'        this value, a leaf is constructed.}
+#' }
 #' @return returns an object of class "canonical_correlation_tree",
-#' where an object of class  "canonical_correlation_tree" is a list
-#' containing at the following components:
-#'    isLeaf boolean wether the tree is a leaf
-#'    trainingCounts number of training examples this tree got (ncol(X))
-#'    iIn feature indices that the node got, needed for prediction
-#'    decisionProjection numeric matrix The projection matrix that was
-#'      used to find the best split point
-#'    lessthanChild Reference to the left subtree
-#'    greaterthanChild Reference to the right subtree
+#' where the object is a list containing at the following components:
+#'   \item{isLeaf}{boolean wether the tree is a leaf}
+#'   \item{trainingCounts}{number of training examples this tree got (ncol(X))}
+#'   \item{iIn}{feature indices that the node got, needed for prediction}
+#'   \item{decisionProjection}{ numeric matrix The projection matrix that was
+#'      used to find the best split point}
+#'   \item{lessthanChild}{Reference to the left subtree}
+#'   \item{greaterthanChild}{Reference to the right subtree}
 #'
 #' @export
-canonical_correlation_tree = function(X, Y, depth = 0, options = list(minPointsForSplit = 2, maxDepthsplit = Inf)) {
+canonical_correlation_tree = function(X, Y,
+                                      depth = 0,
+                                      options = list(minPointsForSplit = 2, maxDepthsplit = Inf)) {
   #X = as.matrix(X)
   #Y = as.matrix(Y)
   if (nrow(X) == 1
