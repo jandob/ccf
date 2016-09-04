@@ -7,13 +7,13 @@
 #' not only correlated, but "on the same scale" and hence can be directly
 #' compared.
 #'
-#' @param X numeric matrix (n * p) wiht n observations of p variables
-#' @param Y muneric matrix (n * q) wiht n observations of q variables
+#' @param X numeric matrix (n * p) with n observations of p variables
+#' @param Y numeric matrix (n * q) with n observations of q variables
 #' @param epsilon numeric scalar tolerance for rank reduction of the
 #' input matrices
 #' @return A list containing the following components
-#'         \item{xcoef}{Estimated estimated coefficients for the X variables.}
-#'         \item{ycoef}{Estimated estimated coefficients for the X variables.}
+#'         \item{xcoef}{Estimated coefficients for the X variables.}
+#'         \item{ycoef}{Estimated coefficients for the Y variables.}
 #'         \item{cor}{Matrix of correlations.}
 #'
 #' @examples
@@ -30,6 +30,8 @@ canonical_correlation_analysis = function(X, Y, epsilon=1e-4) {
   #X = as.matrix(X)
   #Y = as.matrix(Y)
   # colMeans() from http://gastonsanchez.com/how-to/2014/01/15/Center-data-in-R/
+  #bYpresent = any(Y,1);
+  #Y = Y(:,bYpresent);
   center_colmeans <- function(x) {
     x_center = colMeans(x)
     x - rep(x_center, rep.int(nrow(x), ncol(x)))
@@ -38,30 +40,38 @@ canonical_correlation_analysis = function(X, Y, epsilon=1e-4) {
   X = center_colmeans(X)
   Y = center_colmeans(Y)
 
-  # QR decomposition (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
-  qr_decomp = qr(X)
+  # QR decomposition
+  # (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
+  qr_decomp = qr(X, tol = epsilon)
   q_X = qr.Q(qr_decomp)
   r_X = qr.R(qr_decomp)
-  #p_X = qr_decomp$pivot
-  qr_decomp = qr(Y)
+  p_X = qr_decomp$pivot
+  rank_X = qr_decomp$rank
+
+  qr_decomp = qr(Y, tol = epsilon)
   q_Y = qr.Q(qr_decomp)
   r_Y = qr.R(qr_decomp)
-  #p_Y = qr_decomp$pivot
+  p_Y = qr_decomp$pivot
+  rank_Y = qr_decomp$rank
 
   # reduce Q and R to full rank
-  # TODO check if diag does the same as in matlab
-  rank_X = sum(abs(diag(r_X)) >= (epsilon * abs(r_X[1, 1])))
-  rank_Y = sum(abs(diag(r_Y)) >= (epsilon * abs(r_Y[1, 1])))
-  # TODO if rank == 0
+  if (rank_X == 0) {
+    matrixA = matrix(0, ncol(X), 1)
+    matrixA[1, ] = 1
+    return(list(xcoef = matrixA,
+                ycoef = NULL,
+                cor = NULL)
+    )
+  }
 
   if (rank_X < ncol(X)) {
     q_X = q_X[, 1:rank_X]
   }
-  r_X = r_X[1:rank_X,1:rank_X]
+  r_X = r_X[1:rank_X, 1:rank_X]
   if (rank_Y < ncol(Y)) {
     q_Y = q_Y[, 1:rank_Y]
   }
-  r_Y = r_Y[1:rank_Y,1:rank_Y]
+  r_Y = r_Y[1:rank_Y, 1:rank_Y]
 
   number_of_coefficient_pairs = min(rank_X, rank_Y)
 
@@ -82,21 +92,31 @@ canonical_correlation_analysis = function(X, Y, epsilon=1e-4) {
   #M = M[,1:number_of_coefficient_pairs]
 
   # note solve(X) == X^-1
-  # A = mldivide(r_X, L[,1:number_of_coefficient_pairs] * sqrt(nrow(X)-1)) #version from MATLAB
+  # version from original MATLAB source:
+  # A = mldivide(r_X, L[,1:number_of_coefficient_pairs] * sqrt(nrow(X)-1))
   A = solve(r_X) %*% L[, 1:number_of_coefficient_pairs] * sqrt(nrow(X) - 1)
   B = solve(r_Y) %*% M[, 1:number_of_coefficient_pairs] * sqrt(nrow(X) - 1)
 
   correlations = diag(D)
 
   # restore full size
-  A = rbind(A, matrix(0,ncol(X) - rank_X, number_of_coefficient_pairs))
-  B = rbind(B, matrix(0,ncol(Y) - rank_Y, number_of_coefficient_pairs))
+  A = rbind(A, matrix(0, ncol(X) - rank_X, number_of_coefficient_pairs))
+  B = rbind(B, matrix(0, ncol(Y) - rank_Y, number_of_coefficient_pairs))
+  # restore order
+  A = A[p_X, , drop = FALSE]
+  B = B[p_Y, , drop = FALSE]
 
-  # normalize (needed?)
-  A = apply(A, 1, function(x) {x / sqrt(colSums(A ^ 2))}) #MATLAB: bsxfun(@rdivide,projMat,sqrt(sum(projMat.^2,1)));
-  # TODO svd returns negative matrix in MATLAB
+  # normalize
+  A = scale(A, center = FALSE, scale = sqrt(colSums(A ^ 2)))
 
-  l = list(xcoef = as.matrix(A), ycoef = as.matrix(B), cor = as.matrix(correlations))
-  return(l)
-  #TODO
+  # convert to matrices and restore dimension names
+  matrixA = as.matrix(A)
+  matrixB = as.matrix(B)
+  rownames(matrixA) = colnames(X)
+  rownames(matrixB) = colnames(Y)
+
+  return(list(xcoef = matrixA,
+              ycoef = matrixB,
+              cor = as.matrix(correlations)) #TODO add dimnames
+  )
 }

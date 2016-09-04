@@ -7,17 +7,17 @@
 canonical_correlation_analysis(X, Y, epsilon = 1e-04)
 }
 \arguments{
-\item{X}{numeric matrix (n * p) wiht n observations of p variables}
+\item{X}{numeric matrix (n * p) with n observations of p variables}
 
-\item{Y}{muneric matrix (n * q) wiht n observations of q variables}
+\item{Y}{numeric matrix (n * q) with n observations of q variables}
 
 \item{epsilon}{numeric scalar tolerance for rank reduction of the
 input matrices}
 }
 \value{
 A list containing the following components
-        \item{xcoef}{Estimated estimated coefficients for the X variables.}
-        \item{ycoef}{Estimated estimated coefficients for the X variables.}
+        \item{xcoef}{Estimated coefficients for the X variables.}
+        \item{ycoef}{Estimated coefficients for the Y variables.}
         \item{cor}{Matrix of correlations.}
 }
 \description{

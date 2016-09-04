@@ -5,8 +5,9 @@ random_element = function(x) {
   return(x)
 }
 
-eps = 1 - 3*(4/3 - 1)
+eps = 1 - 3 * ((4 / 3) - 1)
 
+#' @importFrom stats model.matrix
 one_hot_encode = function(data) {
   if (!is.data.frame(data)) {
     data = data.frame(data)
@@ -14,11 +15,13 @@ one_hot_encode = function(data) {
   }
   data$label = as.factor(data$label)
   # This trick only works with factors
-  return(model.matrix(~label-1, data = data))
+  return(model.matrix(~label - 1, data = data))
 }
 
 one_hot_decode = function(X_one_hot) {
-  X = apply(X_one_hot, 1, function(row){which(row == 1)})
+  X = apply(X_one_hot, 1, function(row){
+    which(row == 1)
+  })
   return(X)
 }
 TODO = function(message = "TODO", return=NULL) {
@@ -36,10 +39,6 @@ generate_2d_data_plot = function(data = NULL,
     stop("ggplot2 needed for plotting to work. Please install it.",
          call. = FALSE)
   }
-  #x_min = min(data$x, data_raster$x)
-  #x_max = max(data$x, data_raster$x)
-  #y_min = min(data$y, data_raster$y)
-  #y_max = max(data$y, data_raster$y)
   blank = ggplot2::element_blank()
   g = ggplot2::ggplot() +
     ggplot2::theme_bw(base_size = 15) +
@@ -49,7 +48,7 @@ generate_2d_data_plot = function(data = NULL,
                    panel.grid.minor = blank,
                    axis.text = blank,
                    axis.title = blank,
-                   legend.position = 'none') +
+                   legend.position = "none") +
     ggplot2::geom_raster(
       ggplot2::aes(x = data_raster$x,
                    y = data_raster$y,
@@ -69,8 +68,9 @@ generate_2d_data_plot = function(data = NULL,
   return(g)
 }
 #' @importFrom stats predict
-plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...) {
-  data = data.frame(x = X[,1], y = X[,2], z = Y)
+plot_decision_surface = function(
+    model, X, Y, title = NULL, interpolate = F, ...) {
+  data = data.frame(x = X[, 1], y = X[, 2], z = Y)
 
   x_min <- min(data$x) * 1.2
   x_max <- max(data$x) * 1.2
@@ -92,6 +92,19 @@ plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...
 get_missclassification_rate = function(model, data_test, ...) {
   predictions = as.matrix(stats::predict(model, data_test, ...))
   # TODO use formula instead of last column
-  actual = data_test[,ncol(data_test)]
+  actual = data_test[, ncol(data_test)]
   return(mean(actual != predictions))
+}
+
+#' @importFrom stats predict
+load_csv_data_set = function(data_set_path) {
+  data = as.matrix(utils::read.csv(
+    data_set_path, header = F, sep = ",", quote = "\"",
+    dec = ".", fill = TRUE, comment.char = ""
+  ))
+  nr_of_features = ncol(data) - 1
+  return(list(
+    X = data[, 1:nr_of_features],
+    Y = data[, ncol(data), drop = F]
+  ))
 }

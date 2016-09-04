@@ -5,12 +5,13 @@
 \title{Creates a canonical correlation tree.}
 \usage{
 canonical_correlation_tree(X, Y, depth = 0, options = list(minPointsForSplit
-  = 2, maxDepthsplit = Inf))
+  = 2, maxDepthsplit = Inf, XVariationTolerance = 1e-10, projectionBootstrap =
+  F))
 }
 \arguments{
 \item{X}{numeric matrix (n * p) wiht n observations of p variables}
 
-\item{Y}{muneric matrix (n * q) wiht n observations of q variables}
+\item{Y}{numeric matrix (n * q) wiht n observations of q variables}
 
 \item{depth}{The subtree depth}
 

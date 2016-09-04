@@ -4,14 +4,30 @@
 \alias{canonical_correlation_forest}
 \title{Canonical Correlation Forest}
 \usage{
-canonical_correlation_forest(x, ...)
+canonical_correlation_forest(x, Y_one_hot, nr_of_trees = 200,
+  options = list(verbose = F), ...)
 }
 \arguments{
-\item{x}{Either a formula or a matrix.}
+\item{x}{numeric matrix (n * p) with n observations of p variables}
+
+\item{Y_one_hot}{muneric matrix with n observations of q variables
+(one_hot_encoded)}
+
+\item{nr_of_trees}{nr of trees the forest will be composed of}
+
+\item{options}{list of options}
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+returns an object of class "canonical_correlation_forest",
+where an object of this class is a list containing the following
+components:
+  \item{X,Y_one_hot}{The original input data}
+  \item{forest}{a vector of length nr_of_trees with objects of class
+   "canonical_correlation_tree"}
+}
 \description{
-Generic function for creating canonical correlation forests.
+Default S3 method for canonical_correlation_forest.
 }
 

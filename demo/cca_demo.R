@@ -3,6 +3,7 @@ library(ccf)
 library(pracma)
 library(MASS)
 library(grid)
+library(ggplot2)
 gen_plot = function(X,Y) {
   cca = canonical_correlation_analysis(X, one_hot_encode(Y))
   data_plot = generate_2d_data_plot(data.frame(x = X[,1], y = X[,2], z = Y)) +
@@ -23,9 +24,9 @@ plot_2 = gen_plot(X, Y)
 Y[X[,1] > X[,2] & -X[,1] > X[,2]] = 4
 plot_3 = gen_plot(X, Y)
 
-#print(plot_1)
-#print(plot_2)
-#print(plot_3)
+print(plot_1)
+print(plot_2)
+print(plot_3)
 
 grid.newpage()
 pushViewport(viewport(layout = grid.layout(1, 3)))

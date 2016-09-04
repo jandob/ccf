@@ -9,7 +9,7 @@ data_test = data[1001:10000,]
 # sample 1000 data points
 #data = data[sample(nrow(data), 1000), ]
 
-generate_2d_data_plot(data_train)
+print(generate_2d_data_plot(data_train))
 
 
 # convert to matrices
@@ -64,6 +64,7 @@ plot_cct = plot_decision_surface(model, X, Y, title = "Single CCT")
 
 # classify with CCF
 model = canonical_correlation_forest(X, one_hot_encode(Y), nr_of_trees = 200)
+# TODO formulas not yet working
 canonical_correlation_forest(as.factor(z)~., data_train)
 error_ccf = get_missclassification_rate(model, data_test)
 print(paste("ccf missclassification rate:", error_ccf))
