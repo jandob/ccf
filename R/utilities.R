@@ -1,47 +1,49 @@
-random_element = function(x) {
+random_element <- function(x) {
   if (length(x) > 1) {
     return(sample(x, 1))
   }
   return(x)
 }
 
-eps = 1 - 3*(4/3 - 1)
+eps <- 1 - 3*(4/3 - 1)
 
-one_hot_encode = function(data) {
+one_hot_encode <- function(data) {
   if (!is.data.frame(data)) {
-    data = data.frame(data)
-    colnames(data) = "label"
+    data <- data.frame(data)
+    colnames(data) <- "label"
   }
-  data$label = as.factor(data$label)
+  data$label <- as.factor(data$label)
   # This trick only works with factors
   return(model.matrix(~label-1, data = data))
 }
 
-one_hot_decode = function(X_one_hot) {
-  X = apply(X_one_hot, 1, function(row){which(row == 1)})
+one_hot_decode <- function(X_one_hot) {
+  X <- apply(X_one_hot, 1, function(row){which(row == 1)})
   return(X)
 }
-TODO = function(message = "TODO", return=NULL) {
+
+TODO <- function(message = "TODO", return = NULL) {
   print(paste("TODO", message))
   if (!is.null(return)) {
     return(return)
   }
   stop()
 }
-generate_2d_data_plot = function(data = NULL,
-                                 data_raster = NULL,
-                                 interpolate = F,
-                                 title = "") {
+
+generate_2d_data_plot <- function(data = NULL,
+                                  data_raster = NULL,
+                                  interpolate = F,
+                                  title = "") {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("ggplot2 needed for plotting to work. Please install it.",
          call. = FALSE)
   }
-  #x_min = min(data$x, data_raster$x)
-  #x_max = max(data$x, data_raster$x)
-  #y_min = min(data$y, data_raster$y)
-  #y_max = max(data$y, data_raster$y)
-  blank = ggplot2::element_blank()
-  g = ggplot2::ggplot() +
+  #x_min <- min(data$x, data_raster$x)
+  #x_max <- max(data$x, data_raster$x)
+  #y_min <- min(data$y, data_raster$y)
+  #y_max <- max(data$y, data_raster$y)
+  blank <- ggplot2::element_blank()
+  g <- ggplot2::ggplot() +
     ggplot2::theme_bw(base_size = 15) +
     ggplot2::coord_fixed(ratio = 0.8) +
     ggplot2::theme(axis.ticks = blank,
@@ -68,9 +70,10 @@ generate_2d_data_plot = function(data = NULL,
 
   return(g)
 }
+
 #' @importFrom stats predict
-plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...) {
-  data = data.frame(x = X[,1], y = X[,2], z = Y)
+plot_decision_surface <- function(model, X, Y, title = NULL, interpolate = F, ...) {
+  data <- data.frame(x = X[,1], y = X[,2], z = Y)
 
   x_min <- min(data$x) * 1.2
   x_max <- max(data$x) * 1.2
@@ -88,6 +91,7 @@ plot_decision_surface = function(model, X, Y, title = NULL, interpolate = F, ...
                                       title = title)
   return(plot_object)
 }
+
 #' @importFrom stats predict
 get_missclassification_rate = function(model, data_test, ...) {
   predictions = as.matrix(stats::predict(model, data_test, ...))
