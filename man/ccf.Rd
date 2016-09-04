@@ -6,12 +6,13 @@
 \alias{canonical_correlation_forest.formula}
 \title{Canonical correlation forest}
 \usage{
-canonical_correlation_forest(x, y, ntree = 200, verbose = FALSE, ...)
+canonical_correlation_forest(x, y = NULL, ntree = 200, verbose = FALSE,
+  ...)
 
-\method{canonical_correlation_forest}{default}(x, y, ntree = 200,
+\method{canonical_correlation_forest}{default}(x, y = NULL, ntree = 200,
   verbose = FALSE, ...)
 
-\method{canonical_correlation_forest}{formula}(x, y, ntree = 200,
+\method{canonical_correlation_forest}{formula}(x, y = NULL, ntree = 200,
   verbose = FALSE, ...)
 }
 \arguments{
