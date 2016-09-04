@@ -1,18 +1,7 @@
-#' Canonical Correlation Forest
+#' Canonical correlation forest
 #'
-#' Generic function for creating canonical correlation forests.
-#' @param x Either a formula or a matrix.
-#' @param ...	further arguments passed to or from other methods.
-#' @rdname ccf
-#' @export
-canonical_correlation_forest = function(x, ...) {
-  UseMethod("canonical_correlation_forest")
-}
-
-#' Canonical Correlation Forest
-#'
-#' Default S3 method for canonical_correlation_forest.
-#'
+#' This function computes a classifier based on a canonical correlation forest. It
+#' expects its input in matrix form or as formula notation.
 #' @param x numeric matrix (n * p) with n observations of p variables
 #' @param Y_one_hot muneric matrix with n observations of q variables
 #' (one_hot_encoded)
@@ -25,6 +14,15 @@ canonical_correlation_forest = function(x, ...) {
 #'   \item{X,Y_one_hot}{The original input data}
 #'   \item{forest}{a vector of length ntree with objects of class
 #'    "canonical_correlation_tree"}
+#' @references Rainforth, T., and Wood, F. (2015): Canonical correlation forest,
+#' arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
+#' @rdname ccf
+#' @export
+canonical_correlation_forest = function(x, ...) {
+  UseMethod("canonical_correlation_forest", x)
+}
+
+
 #' @rdname ccf
 #' @export
 canonical_correlation_forest.default = function(x, Y_one_hot, ntree = 200, ...) {
@@ -61,22 +59,37 @@ canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
   canonical_correlation_forest.default(X, Y, ...)
 }
 
-# TODO: documentation
+#' Prediction from canonical correlation forest
+#'
+#' Performs predictions on test data for a trained canonical correlation forest.
+#' @param object An object of class \code{canonical_correlation_forest}, as created
+#' by the function \code{\link{canonical_correlation_forest}}.
+#' @param newdata A data frame or a matrix containing the test data.
+#' @param verbose Optional argument to control if additional information are
+#' printed to the output. Default is \code{FALSE}.
 #' @export
 predict.canonical_correlation_forest = function(object, newdata, ...) {
-  #library(plyr)
-  ntree = length(object$forest)
-  treePredictions = matrix(NaN, nrow(newdata), ntree)
-  for (i in 1:ntree) {
-    cat(sprintf("\rprediction %d of %d", i, ntree))
-    treePredictions[,i] = predict(object$forest[[i]], newdata)
+  if (missing(newdata)) {
+    stop("Argument 'newdata' is missing.")
   }
-  cat("\n")
-  cat("majority vote...")
-  treePredictions = apply(treePredictions, 1,
-                          function(row) {names(sort(table(row), decreasing = TRUE)[1])}
-                    )
-  cat("\rmajority vote done\n")
+
+  ntree <- length(object$forest)
+  treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
+
+  for (i in 1:ntree) {
+    if (!missing(verbose) && verbose == TRUE) {
+      cat("Prediction", i, "of", ntree, "\n")
+    }
+
+    treePredictions[, i] <- predict(object$forest[[i]], newdata)
+  }
+
+  if (!missing(verbose) && verbose == TRUE) {
+    cat("\nMajority vote")
+  }
+
+  treePredictions <- apply(treePredictions, 1, function(row) { names(max(table(row))) })
+
   return(treePredictions)
 }
 
