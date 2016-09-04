@@ -17,6 +17,6 @@ Note: n and p have to match the dimensions of the training data.}
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-## S3 method for class 'canonical_correlation_tree'
+Plots the decision surface for a CCT, training dataa has to be 2d.
 }
 

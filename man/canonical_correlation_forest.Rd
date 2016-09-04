@@ -28,6 +28,6 @@ components:
    "canonical_correlation_tree"}
 }
 \description{
-Default S3 method for canonical_correlation_forest.
+Canonical Correlation Forest
 }
 
