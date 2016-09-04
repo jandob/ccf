@@ -3,15 +3,13 @@
 #' This function computes a classifier based on a canonical correlation forest. It
 #' expects its input in matrix form or as formula notation.
 #' @param x numeric matrix (n * p) with n observations of p variables
-#' @param Y_one_hot muneric matrix with n observations of q variables
-#' (one_hot_encoded)
+#' @param y muneric matrix with n observations of q variables
 #' @param ntree nr of trees the forest will be composed of
 #' @param ...	further arguments passed to or from other methods.
-#'
 #' @return returns an object of class "canonical_correlation_forest",
 #' where an object of this class is a list containing the following
 #' components:
-#'   \item{X,Y_one_hot}{The original input data}
+#'   \item{x,y}{The original input data}
 #'   \item{forest}{a vector of length ntree with objects of class
 #'    "canonical_correlation_tree"}
 #' @references Rainforth, T., and Wood, F. (2015): Canonical correlation forest,
@@ -25,24 +23,35 @@ canonical_correlation_forest = function(x, ...) {
 
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.default = function(x, Y_one_hot, ntree = 200, ...) {
+canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FALSE, ...) {
   forest = vector(mode = "list", length = ntree)
+
+  # TODO: one_hot_encoding
+
   for (i in 1:ntree) {
-    cat(sprintf("\rtraining tree %d of %d", i, ntree))
-    sampleIndices = sample(nrow(x),size = nrow(x), replace = T)
-    XBag = x[sampleIndices,]
-    YBag = Y_one_hot[sampleIndices,]
-    forest[[i]] = canonical_correlation_tree(XBag,YBag)
-    #YBag_decoded = Y[sampleIndices]
+    if (verbose) {
+      cat("Training tree", i, "of", ntree)
+    }
+
+    sample_idx = sample(nrow(x), size = nrow(x), replace = TRUE)
+
+    x_bag = x[sample_idx, ]
+    y_bag = y[sample_idx, ]
+
+    forest[[i]] = canonical_correlation_tree(x_bag, y_bag)
+
+    #TODO: remove commented code
+    #YBag_decoded = Y[sample_idx]
     #plotCCT(forest[[i]], XBag, YBag_decoded)
   }
-  cat("\n")
-  model = structure(list(X = x, Y_one_hot = Y_one_hot, forest = forest),
+
+  model = structure(list(x = x, y = y, forest = forest),
                     class = "canonical_correlation_forest")
   return(model)
 }
 
 #' @importFrom stats model.frame model.response model.matrix
+#' @rdname ccf
 #' @export
 canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
   stopifnot(inherits(formula, "formula"), is.null(data))
@@ -52,11 +61,13 @@ canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
   }
   # remove intercept, TODO what is it good for, regression? ...
 
-  model_frame = stats::model.frame(formula, data = data)
-  Y = stats::model.response(model_frame)
-  X = stats::model.matrix(model.frame)
-  Terms <- attr(model_frame, "terms")
-  canonical_correlation_forest.default(X, Y, ...)
+  model_frame = model.frame(formula, data = data)
+
+  y = model.response(model_frame)
+  x = model.matrix(model.frame)
+  terms <- attr(model_frame, "terms")
+
+  canonical_correlation_forest.default(x, y, ...)
 }
 
 #' Prediction from canonical correlation forest
@@ -67,8 +78,10 @@ canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
 #' @param newdata A data frame or a matrix containing the test data.
 #' @param verbose Optional argument to control if additional information are
 #' printed to the output. Default is \code{FALSE}.
+#' @param ... Additional parameters passed on to prediction from individual
+#' canonical correlation trees.
 #' @export
-predict.canonical_correlation_forest = function(object, newdata, ...) {
+predict.canonical_correlation_forest = function(object, newdata, verbose = FALSE, ...) {
   if (missing(newdata)) {
     stop("Argument 'newdata' is missing.")
   }
@@ -76,15 +89,16 @@ predict.canonical_correlation_forest = function(object, newdata, ...) {
   ntree <- length(object$forest)
   treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
 
+  # TODO: make more efficient with apply or dplyr
   for (i in 1:ntree) {
-    if (!missing(verbose) && verbose == TRUE) {
+    if (verbose) {
       cat("Prediction", i, "of", ntree, "\n")
     }
 
-    treePredictions[, i] <- predict(object$forest[[i]], newdata)
+    treePredictions[, i] <- predict(object$forest[[i]], newdata, ...)
   }
 
-  if (!missing(verbose) && verbose == TRUE) {
+  if (verbose) {
     cat("\nMajority vote")
   }
 
@@ -93,6 +107,9 @@ predict.canonical_correlation_forest = function(object, newdata, ...) {
   return(treePredictions)
 }
 
+#' Visualization of canonical correlation forest
+#'
+#' TODO: document
 #' @export
 plot.canonical_correlation_forest = function(...) {
   plot.canonical_correlation_tree(...)
