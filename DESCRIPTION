@@ -2,17 +2,26 @@ Package: ccf
 Type: Package
 Title: Canonical Correlation Forest
 Version: 0.1.0
-Authors@R: person("Janosch", "Dobler", email = "janosch.dobler@gmail.com", role = c("aut", "cre"))
+Date: 2016-09-04
+Authors@R: c(person("Janosch", "Dobler", email = "janosch.dobler@gmail.com", role = c("aut", "cre"),
+             person("Stefan", "Feuerriegel", email="stefan.feuerriegel@is.uni-freiburg.de",
+                    role=c("aut")))
+Author: Janosch Dobler [aut, cre],
+  Stefan Feuerriegel[aut]
+Maintainer: Janosch Dobler <janosch.dobler@gmail.com>
 Description: Implementation of Canonical Correlation Forests (CCF) based on the
     paper and the MATLAB Implementation of Tom Rainforth (http://bitbucket.org/twgr/ccf).
 License: MIT + file LICENSE
-URL: http://github.com/jandob/ccf, http://bitbucket.org/twgr/ccf
+URL: https://github.com/jandob/ccf
 BugReports: https://github.com/jandob/ccf/issues
-LazyData: TRUE
-RoxygenNote: 5.0.1
 Depends:
     R (>= 2.10)
-Suggests: testthat,
+Suggests: 
+    testthat,
+    knitr,
     ggplot2,
     MASS,
     pracma
+LazyData: TRUE
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
