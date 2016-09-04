@@ -3,10 +3,12 @@
 #' Generic function for creating canonical correlation forests.
 #' @param x Either a formula or a matrix.
 #' @param ...	further arguments passed to or from other methods.
+#' @rdname ccf
 #' @export
 canonical_correlation_forest = function(x, ...) {
   UseMethod("canonical_correlation_forest")
 }
+
 #' Canonical Correlation Forest
 #'
 #' Default S3 method for canonical_correlation_forest.
@@ -23,6 +25,7 @@ canonical_correlation_forest = function(x, ...) {
 #'   \item{X,Y_one_hot}{The original input data}
 #'   \item{forest}{a vector of length nr_of_trees with objects of class
 #'    "canonical_correlation_tree"}
+#' @rdname ccf
 #' @export
 canonical_correlation_forest.default = function(x, Y_one_hot, nr_of_trees = 200, ...) {
   forest = vector(mode = "list", length = nr_of_trees)
@@ -40,6 +43,7 @@ canonical_correlation_forest.default = function(x, Y_one_hot, nr_of_trees = 200,
                     class = "canonical_correlation_forest")
   return(model)
 }
+
 #' @importFrom stats model.frame model.response model.matrix
 #' @export
 canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
@@ -56,6 +60,8 @@ canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
   Terms <- attr(model_frame, "terms")
   canonical_correlation_forest.default(X, Y, ...)
 }
+
+# TODO: documentation
 #' @export
 predict.canonical_correlation_forest = function(object, newdata, ...) {
   #library(plyr)
@@ -73,6 +79,7 @@ predict.canonical_correlation_forest = function(object, newdata, ...) {
   cat("\rmajority vote done\n")
   return(treePredictions)
 }
+
 #' @export
 plot.canonical_correlation_forest = function(...) {
   plot.canonical_correlation_tree(...)
