@@ -3,13 +3,13 @@ Type: Package
 Title: Canonical correlation rorest
 Version: 0.1.0
 Date: 2016-09-04
-Authors@R: c(person("Janosch", "Dobler", email = "janosch.dobler@gmail.com",
+Authors@R: c(person("Janosch", "Dobler", email = "info@jandob.com",
                     role = c("aut", "cre")),
              person("Stefan", "Feuerriegel", email="stefan.feuerriegel@is.uni-freiburg.de",
                     role = c("aut")))
 Author: Janosch Dobler [aut, cre],
   Stefan Feuerriegel[aut]
-Maintainer: Janosch Dobler <janosch.dobler@gmail.com>
+Maintainer: Janosch Dobler <info@jandob.com>
 Description: The so-called canonical correlation forest (CCF) presents classification
     algorithm for prediction tasks from machine learning. It utilizes an ensemble of
     decision trees with data preprocessing by the means of canonical correlation analysis.
