@@ -18,7 +18,7 @@
 #' arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
 #' @rdname ccf
 #' @export
-canonical_correlation_forest = function(x, y, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
   UseMethod("canonical_correlation_forest", x)
 }
 
@@ -27,6 +27,11 @@ canonical_correlation_forest = function(x, y, ntree = 200, verbose = FALSE, ...)
 #' @export
 canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FALSE, ...) {
   forest = vector(mode = "list", length = ntree)
+
+  if (is.null(y)) {
+    stop("CCF requires y variable.")
+  }
+
 
   # TODO: one_hot_encoding
 
@@ -38,7 +43,12 @@ canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FAL
     sample_idx = sample(nrow(x), size = nrow(x), replace = TRUE)
 
     x_bag = x[sample_idx, ]
-    y_bag = y[sample_idx, ]
+
+    if (is.vector(y)) {
+      y_bag <- y[sample_idx]
+    } else {
+      y_bag <- y[sample_idx, ]
+    }
 
     forest[[i]] = canonical_correlation_tree(x_bag, y_bag)
 
