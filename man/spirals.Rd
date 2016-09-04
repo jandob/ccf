@@ -3,7 +3,7 @@
 \docType{data}
 \name{spirals}
 \alias{spirals}
-\title{An artificial spiral dataset}
+\title{Spiral dataset}
 \format{A data frame with 10000 rows and 3 variables:
 \describe{
   \item{x}{numeric scalar: x-coordinate}
@@ -11,6 +11,7 @@
   \item{class}{integer: either 1,2 or 3}
 }}
 \source{
+Created by T. Rainforth, URL:
 \url{https://bitbucket.org/twgr/ccf/raw/49d5fce6fc006bc9a8949c7149fc9524535ce418/Datasets/spirals.csv}
 }
 \usage{
