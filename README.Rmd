@@ -69,19 +69,22 @@ The interface follows common R conventions as used by other machine learning rou
 # load sample dataset
 data(spirals) 
 
+d_train <- spirals[1:1000, ]
+d_test <- spirals[-(1:1000), ]
+
 # compute classifier on training data
 ## variant 1: matrix input
-model <- canonical_correlation_forest(X, one_hot_encode(Y), nr_of_trees = 200)
+m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 200)
 ## variant 2: formula notation
-canonical_correlation_forest(as.factor(z)~., d_train)
+m2 <- canonical_correlation_forest(class ~ ., d_train)
 
-# compute prediction accuracy
-error_ccf <- get_missclassification_rate(model, d_test)
-print(paste("ccf missclassification rate:", error_ccf))
+# compute predictive accuracy
+get_missclassification_rate(m1, d_test)
+get_missclassification_rate(m1, d_test)
 ```
 
 ```{r}
-plot_ccf <- plot_decision_surface(model, X, Y, title = "CCF with 200 Trees")
+plot_ccf <- plot_decision_surface(model, X, Y, title = "CCF with 200 trees")
 ```
 
 ## License
