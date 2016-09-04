@@ -42,12 +42,12 @@ canonical_correlation_forest.default = function(x, y = NULL, ntree = 200, verbos
 
     sample_idx = sample(nrow(x), size = nrow(x), replace = TRUE)
 
-    x_bag = x[sample_idx, ]
+    x_bag = x[sample_idx, , drop = FALSE]
 
     if (is.vector(y)) {
-      y_bag <- y[sample_idx]
+      y_bag <- y[sample_idx, drop = FALSE]
     } else {
-      y_bag <- y[sample_idx, ]
+      y_bag <- y[sample_idx, , drop = FALSE]
     }
 
     forest[[i]] = canonical_correlation_tree(x_bag, y_bag)
