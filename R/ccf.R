@@ -25,7 +25,7 @@ canonical_correlation_forest = function(x, y = NULL, ntree = 200, verbose = FALS
 
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest.default = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
   forest = vector(mode = "list", length = ntree)
 
   if (is.null(y)) {
@@ -65,7 +65,7 @@ canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FAL
 #' @importFrom stats model.frame model.response model.matrix
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.formula = function(x, y, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest.formula = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
   formula <- x
   data <- y
 
