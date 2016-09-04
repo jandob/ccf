@@ -2,7 +2,7 @@ Package: ccf
 Type: Package
 Title: Canonical Correlation Forest
 Version: 0.1.0
-Authors@R: person("Janosch", "Dobler", email = "janosch.dobler@gmail.com", role = c("aut", "cre"))
+Authors@R: person("Janosch", "Dobler", email = "info@jandob.com", role = c("aut", "cre"))
 Description: Implementation of Canonical Correlation Forests (CCF) based on the
     paper and the MATLAB Implementation of Tom Rainforth (http://bitbucket.org/twgr/ccf).
 License: MIT + file LICENSE
