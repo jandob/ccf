@@ -64,7 +64,7 @@ print(paste("cct missclassification rate:", error_cct))
 plot_cct <- plot_decision_surface(model, X, Y, title = "Single CCT")
 
 # classify with CCF
-model <- canonical_correlation_forest(X, one_hot_encode(Y), nr_of_trees = 200)
+model <- canonical_correlation_forest(X, one_hot_encode(Y), ntree = 200)
 canonical_correlation_forest(as.factor(z)~., d_train)
 error_ccf <- get_missclassification_rate(model, d_test)
 print(paste("ccf missclassification rate:", error_ccf))

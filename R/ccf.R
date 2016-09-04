@@ -16,21 +16,21 @@ canonical_correlation_forest = function(x, ...) {
 #' @param x numeric matrix (n * p) with n observations of p variables
 #' @param Y_one_hot muneric matrix with n observations of q variables
 #' (one_hot_encoded)
-#' @param nr_of_trees nr of trees the forest will be composed of
+#' @param ntree nr of trees the forest will be composed of
 #' @param ...	further arguments passed to or from other methods.
 #'
 #' @return returns an object of class "canonical_correlation_forest",
 #' where an object of this class is a list containing the following
 #' components:
 #'   \item{X,Y_one_hot}{The original input data}
-#'   \item{forest}{a vector of length nr_of_trees with objects of class
+#'   \item{forest}{a vector of length ntree with objects of class
 #'    "canonical_correlation_tree"}
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.default = function(x, Y_one_hot, nr_of_trees = 200, ...) {
-  forest = vector(mode = "list", length = nr_of_trees)
-  for (i in 1:nr_of_trees) {
-    cat(sprintf("\rtraining tree %d of %d", i, nr_of_trees))
+canonical_correlation_forest.default = function(x, Y_one_hot, ntree = 200, ...) {
+  forest = vector(mode = "list", length = ntree)
+  for (i in 1:ntree) {
+    cat(sprintf("\rtraining tree %d of %d", i, ntree))
     sampleIndices = sample(nrow(x),size = nrow(x), replace = T)
     XBag = x[sampleIndices,]
     YBag = Y_one_hot[sampleIndices,]
@@ -65,10 +65,10 @@ canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
 #' @export
 predict.canonical_correlation_forest = function(object, newdata, ...) {
   #library(plyr)
-  nr_of_trees = length(object$forest)
-  treePredictions = matrix(NaN, nrow(newdata), nr_of_trees)
-  for (i in 1:nr_of_trees) {
-    cat(sprintf("\rprediction %d of %d", i, nr_of_trees))
+  ntree = length(object$forest)
+  treePredictions = matrix(NaN, nrow(newdata), ntree)
+  for (i in 1:ntree) {
+    cat(sprintf("\rprediction %d of %d", i, ntree))
     treePredictions[,i] = predict(object$forest[[i]], newdata)
   }
   cat("\n")
