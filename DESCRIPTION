@@ -1,22 +1,25 @@
 Package: ccf
 Type: Package
-Title: Canonical Correlation Forest
+Title: Canonical correlation rorest
 Version: 0.1.0
 Date: 2016-09-04
-Authors@R: c(person("Janosch", "Dobler", email = "janosch.dobler@gmail.com", role = c("aut", "cre"),
+Authors@R: c(person("Janosch", "Dobler", email = "janosch.dobler@gmail.com",
+                    role = c("aut", "cre"),
              person("Stefan", "Feuerriegel", email="stefan.feuerriegel@is.uni-freiburg.de",
-                    role=c("aut")))
+                    role = c("aut")))
 Author: Janosch Dobler [aut, cre],
   Stefan Feuerriegel[aut]
 Maintainer: Janosch Dobler <janosch.dobler@gmail.com>
-Description: Implementation of Canonical Correlation Forests (CCF) based on the
-    paper and the MATLAB Implementation of Tom Rainforth (http://bitbucket.org/twgr/ccf).
+Description: The so-called canonical correlation forest (CCF) presents classification
+    algorithm for prediction tasks from machine learning. It utilizes an ensemble of
+    decision trees with data preprocessing by the means of canonical correlation analysis.
+    Thereby, it is capable of outperforming many widely-used classification methods.
 License: MIT + file LICENSE
 URL: https://github.com/jandob/ccf
 BugReports: https://github.com/jandob/ccf/issues
 Depends:
     R (>= 2.10)
-Suggests: 
+Suggests:
     testthat,
     knitr,
     ggplot2,
