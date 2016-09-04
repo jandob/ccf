@@ -14,3 +14,78 @@ knitr::opts_chunk$set(
 [![Build Status](https://travis-ci.org/jandob/ccf.svg?branch=master)](https://travis-ci.org/jandob/ccf) 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/ccf)](http://cran.r-project.org/package=ccf) 
 [![Coverage Status](https://img.shields.io/codecov/c/github/jandob/ccf/master.svg)](https://codecov.io/github/jandob/ccf?branch=master)
+
+The package `ccf` implements canonical correlations forests (CCFs) for use inside R. These present a novel classification algorithm for machine learning tasks, that are often able outperform common methods for predictive classifiers. The CCF algorithm is based on an ensemble of decision trees together with a canonical correlation analysis. The purpose is to de-correlated individual trees and thus improve the predictive performance.
+
+## Brief summary of CCF algorithm
+
+TEXT
+
+* Rainforth, T., and Wood, F. (2015): [Canonical correlation forest](https://arxiv.org/pdf/1507.05444.pdf), arXiv preprint, arXiv:1507.05444.
+
+## Overview
+
+The most important functions in `ccf` are:
+
+* `canonical_correlation_forest()` compute classifier based on canonical correlation forests. It supports both a matrix-like input, as well as the common convention using a `formula`.
+
+* `predict()` applies classifier to unseen data and predicts the class outcome.
+
+* `plot` visualizates the underlying decision surface.
+
+To see examples of these functions in use, check out the help pages, the demos and this README (which is identical to the vignette). 
+
+## Installation
+
+Using the **devtools** package, you can easily install the latest development version of `ccf` with
+
+```{r,eval=FALSE}
+install.packages("devtools")
+
+# Option 1: download and install latest version from ‘GitHub’
+devtools::install_github("jandob/ccf")
+
+# Option 2: install directly from bundled archive
+# devtoos::install_local("ccf_0.1.0.tar.gz")
+```
+
+Notes: 
+
+* In the case of option 2, you have to specify the path either to the directory of `ccf` or to the bundled archive **ccf_1.0.0.tar.gz**
+
+* A CRAN version has not yet been released, but we are working on it. This also applies to the integration into predictive frameworks such as `caret` or `mlr`.
+
+## Usage
+
+This section shows the basic functionality of how to train a canonical correlation forests and make predictions based on it. First, load the corresponding package `ccf`. 
+
+```{r, message=FALSE}
+library(ccf)
+```
+
+The interface follows common R conventions as used by other machine learning routines. Therefore, the usage is fairly straightforward.
+
+```{r}
+# load sample dataset
+data(spirals) 
+
+# compute classifier on training data
+## variant 1: matrix input
+model <- canonical_correlation_forest(X, one_hot_encode(Y), nr_of_trees = 200)
+## variant 2: formula notation
+canonical_correlation_forest(as.factor(z)~., d_train)
+
+# compute prediction accuracy
+error_ccf <- get_missclassification_rate(model, d_test)
+print(paste("ccf missclassification rate:", error_ccf))
+```
+
+```{r}
+plot_ccf <- plot_decision_surface(model, X, Y, title = "CCF with 200 Trees")
+```
+
+## License
+
+`ccf` is released under the [MIT License](https://opensource.org/licenses/MIT)
+
+Copyright (c) 2016 Janosch Dobler & Stefan Feuerriegel
