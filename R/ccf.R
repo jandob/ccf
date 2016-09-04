@@ -2,10 +2,12 @@
 #'
 #' This function computes a classifier based on a canonical correlation forest. It
 #' expects its input in matrix form or as formula notation.
-#' @param x numeric matrix (n * p) with n observations of p variables
-#' @param y muneric matrix with n observations of q variables
-#' @param ntree nr of trees the forest will be composed of
-#' @param ...	further arguments passed to or from other methods.
+#' @param x Numeric matrix (n * p) with n observations of p variables
+#' @param y Numeric matrix with n observations of q variables
+#' @param ntree Number of trees the forest will be composed of
+#' @param verbose Optional argument to control if additional information are
+#' printed to the output. Default is \code{FALSE}.
+#' @param ...	Further arguments passed to or from other methods.
 #' @return returns an object of class "canonical_correlation_forest",
 #' where an object of this class is a list containing the following
 #' components:
@@ -16,7 +18,7 @@
 #' arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
 #' @rdname ccf
 #' @export
-canonical_correlation_forest = function(x, ...) {
+canonical_correlation_forest = function(x, y, ntree = 200, verbose = FALSE, ...) {
   UseMethod("canonical_correlation_forest", x)
 }
 
@@ -53,19 +55,27 @@ canonical_correlation_forest.default = function(x, y, ntree = 200, verbose = FAL
 #' @importFrom stats model.frame model.response model.matrix
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.formula = function(formula, data = NULL, ...) {
-  stopifnot(inherits(formula, "formula"), is.null(data))
+canonical_correlation_forest.formula = function(x, y, ntree = 200, verbose = FALSE, ...) {
+  formula <- x
+  data <- y
+
+  # TODO: by default, take the data from formula object
+  if (is.null(data)) {
+    stop("CCF based on formula requires a data attribute.")
+  }
+
+  #TODO: what are the comments good for?
+
   #m = match.call(expand.dots = FALSE)
   if (is.matrix(data)) {
     data <- as.data.frame(data)
   }
   # remove intercept, TODO what is it good for, regression? ...
 
-  model_frame = model.frame(formula, data = data)
+  model_frame <- model.frame(formula, data = data)
 
-  y = model.response(model_frame)
   x = model.matrix(model.frame)
-  terms <- attr(model_frame, "terms")
+  y = model.response(model_frame)
 
   canonical_correlation_forest.default(x, y, ...)
 }
@@ -110,6 +120,7 @@ predict.canonical_correlation_forest = function(object, newdata, verbose = FALSE
 #' Visualization of canonical correlation forest
 #'
 #' TODO: document
+#' @param ...	Further arguments passed to or from other methods.
 #' @export
 plot.canonical_correlation_forest = function(...) {
   plot.canonical_correlation_tree(...)
