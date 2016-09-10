@@ -89,8 +89,9 @@ find_best_split = function(X, Y) {
   return(list(partitionPoint = partitionPoint, splitDir = splitDir, gain = maxGain, lessThanPartPoint = lessThanPartPoint))
 }
 
-#' Computes a canonical correlation tree.
+#' Computes a canonical correlation tree
 #'
+#' This function computes a single canonical correlation tree given its input values.
 #' @param X Predictor matrix of size \eqn{n \times p} with \eqn{n} observations and \eqn{p}
 #' variables.
 #' @param Y Predicted values as a matrix of size \eqn{n \times p} with \eqn{n} observations
@@ -100,7 +101,7 @@ find_best_split = function(X, Y) {
 #' leaf (default: 2). If the number of data points is smaller than this value, a leaf is
 #' constructed.
 #' @param maxDepthSplit Optional parameter controlling the construction of leaves after a
-#' certain depth (default: \code{Inf}). {If the current depth is greater than this value,
+#' certain depth (default: \code{Inf}). If the current depth is greater than this value,
 #' a leaf is constructed.
 #' @param ancestralProbs Probabilities of ancestors. Defualt is \code{NULL} as these are
 #' then calculated automatically.
@@ -186,11 +187,11 @@ canonical_correlation_tree = function(X, Y,
   treeLeft = canonical_correlation_tree(X[best_split$lessThanPartPoint, ,drop = F],
                                         Y[best_split$lessThanPartPoint, ,drop = F],
                                         depth = depth + 1,
-                                        options = options)
+                                        minPointsForSplit = minPointsForSplit, maxDepthSplit = maxDepthSplit, ancestralProbs = ancestralProbs)
   treeRight = canonical_correlation_tree(X[!best_split$lessThanPartPoint, ,drop = F],
                                          Y[!best_split$lessThanPartPoint, ,drop = F],
                                          depth = depth + 1,
-                                         options = options)
+                                         minPointsForSplit = minPointsForSplit, maxDepthSplit = maxDepthSplit, ancestralProbs = ancestralProbs)
 
   model = structure(
     list(isLeaf = F,
