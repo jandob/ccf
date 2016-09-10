@@ -11,9 +11,12 @@
 #' @return returns an object of class "canonical_correlation_forest",
 #' where an object of this class is a list containing the following
 #' components:
+#' \itemize{
 #'   \item{x,y}{The original input data}
+#'   \item{y_encoded}{The encoded \code{y} variable in case of classification tasks.}
 #'   \item{forest}{a vector of length ntree with objects of class
-#'    "canonical_correlation_tree"}
+#'    \code{canonical_correlation_tree}.}
+#' }
 #' @examples
 #' data(spirals)
 #'
@@ -49,8 +52,18 @@ canonical_correlation_forest.default = function(x, y = NULL,
     stop("CCF requires y variable.")
   }
 
-
   # TODO: one_hot_encoding
+  if (is.factor(y)) {
+    y_encoded <- one_hot_encode(y)
+    y_use <- y_encoded
+  } else if (is.integer(y)) {
+    y_encoded <- one_hot_encode(y)
+    y_use <- y_encoded
+  } else {
+    y_encoded <- NULL
+    y_use <- y
+  }
+
 
   for (i in 1:ntree) {
     if (verbose) {
@@ -62,9 +75,9 @@ canonical_correlation_forest.default = function(x, y = NULL,
     x_bag = x[sample_idx, , drop = FALSE]
 
     if (is.vector(y)) {
-      y_bag <- y[sample_idx, drop = FALSE]
+      y_bag <- y_use[sample_idx, drop = FALSE]
     } else {
-      y_bag <- y[sample_idx, , drop = FALSE]
+      y_bag <- y_use[sample_idx, , drop = FALSE]
     }
 
     forest[[i]] = canonical_correlation_tree(x_bag, y_bag)
@@ -74,7 +87,7 @@ canonical_correlation_forest.default = function(x, y = NULL,
     #plotCCT(forest[[i]], XBag, YBag_decoded)
   }
 
-  model <- structure(list(x = x, y = y,
+  model <- structure(list(x = x, y = y, y_encoded = y_encoded,
                           ntree = ntree, forest = forest),
                      class = "canonical_correlation_forest")
   return(model)
