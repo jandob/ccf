@@ -19,7 +19,11 @@ The package `ccf` implements canonical correlations forests (CCFs) for use insid
 
 ## Brief summary of CCF algorithm
 
-TEXT
+A decision tree is a predictive model that sequentially divides the input space, each for which a local classification and regression model is calculated (e.g. with a simple majority vote). Thereby, it generates a tree-like structure, whose leaves usually group data points belonging ideally to the same class. An can often achieve a better performance by combining individual trees and average over them. This is known as a decision forest or random forest. 
+
+A canonical correlation forest is a now tree ensemble method. While the concept is similar to a forest, its specific characteristics often achieve a favorable predictive performance. It trains the trees by using a canonical correlation analysis (CCA) in order to find a feature projection that gives a maximal correlation between features. It then chooses the best split in this projected space. 
+
+For a thorough explanation and derivation refer to:
 
 * Rainforth, T., and Wood, F. (2015): [Canonical correlation forest](https://arxiv.org/pdf/1507.05444.pdf), arXiv preprint, arXiv:1507.05444.
 
