@@ -88,33 +88,37 @@ find_best_split = function(X, Y) {
   lessThanPartPoint = X <= partitionPoint
   return(list(partitionPoint = partitionPoint, splitDir = splitDir, gain = maxGain, lessThanPartPoint = lessThanPartPoint))
 }
-#' Creates a canonical correlation tree.
+
+#' Computes a canonical correlation tree.
 #'
-#' @param X numeric matrix (n * p) wiht n observations of p variables
-#' @param Y muneric matrix (n * q) wiht n observations of q variables
-#' @param depth The subtree depth
-#' @param options list containing the following options for the tree
-#' construction:
-#' \describe{
-#'    \item{minPointsForSplit}{If the number of datapoints is smaller than
-#'        this value, a leaf is constructed.}
-#'    \item{maxDepthSplit}{If the current depth is grater than
-#'        this value, a leaf is constructed.}
-#' }
-#' @return returns an object of class "canonical_correlation_tree",
+#' @param X Predictor matrix of size \eqn{n \times p} with \eqn{n} observations and \eqn{p}
+#' variables.
+#' @param Y Predicted values as a matrix of size \eqn{n \times p} with \eqn{n} observations
+#' and \eqn{p} variables.
+#' @param depth Depth of subtree.
+#' @param minPointsForSplit Optional parameter setting the threshold when to construct a
+#' leaf (default: 2). If the number of data points is smaller than this value, a leaf is
+#' constructed.
+#' @param maxDepthSplit Optional parameter controlling the construction of leaves after a
+#' certain depth (default: \code{Inf}). {If the current depth is greater than this value,
+#' a leaf is constructed.
+#' @return Function returns an object of class \code{canonical_correlation_tree},
 #' where the object is a list containing at the following components:
-#'   \item{isLeaf}{boolean wether the tree is a leaf}
-#'   \item{trainingCounts}{number of training examples this tree got (ncol(X))}
-#'   \item{iIn}{feature indices that the node got, needed for prediction}
-#'   \item{decisionProjection}{ numeric matrix The projection matrix that was
-#'      used to find the best split point}
-#'   \item{lessthanChild}{Reference to the left subtree}
-#'   \item{greaterthanChild}{Reference to the right subtree}
-#'
+#' \itemize{
+#'   \item{isLeaf}{Boolean whether the tree is a leaf itself.}
+#'   \item{trainingCounts}{Number of training examples for constructing this tree (i.e.
+#'   number of rows in input argument \code{X}).}
+#'   \item{indicesFeatures}{Feature indices which the node received, as needed for
+#'   prediction.}
+#'   \item{decisionProjection}{Numeric matrix containing the projection matrix that was
+#'      used to find the best split point.}
+#'   \item{refLeftChild}{Reference to the left subtree.}
+#'   \item{refRightChild}{Reference to the right subtree.}
+#' }
 #' @export
 canonical_correlation_tree = function(X, Y,
                                       depth = 0,
-                                      options = list(minPointsForSplit = 2, maxDepthsplit = Inf)) {
+                                      minPointsForSplit = 2, maxDepthsplit = Inf) {
   #X = as.matrix(X)
   #Y = as.matrix(Y)
   if (nrow(X) == 1
@@ -189,11 +193,11 @@ canonical_correlation_tree = function(X, Y,
   model = structure(
     list(isLeaf = F,
          trainingCounts = countsNode,
-         #iIn = iIn, #TODO features that the node got, needed for prediction; for now all nodes get all features
+         #indicesFeatures = indicesFeatures, #TODO features that the node got, needed for prediction; for now all nodes get all features
          decisionProjection = projection_matrix[,best_split$splitDir],
          partitionPoint = best_split$partitionPoint,
-         lessthanChild = treeLeft,
-         greaterthanChild = treeRight
+         refLeftChild = treeLeft,
+         refRightChild = treeRight
     )
   , class = "canonical_correlation_tree")
   return(model)
@@ -217,12 +221,12 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   currentNodeClasses = matrix(nrow = max(nrow(X),1))
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint,] =
-      predict.canonical_correlation_tree(tree$lessthanChild,
+      predict.canonical_correlation_tree(tree$refLeftChild,
                                        X[lessThanPartPoint,,drop=F])
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint,] =
-      predict.canonical_correlation_tree(tree$greaterthanChild,
+      predict.canonical_correlation_tree(tree$refRightChild,
                                        X[!lessThanPartPoint,,drop = F])
   }
   return(currentNodeClasses)
