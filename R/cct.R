@@ -1,12 +1,17 @@
 setupLeaf = function(y) {
-  countsNode <- colSums(y)
-  maxCounts <- max(countsNode)
-  equalMaxCounts <- maxCounts == countsNode
+  if (is.matrix(y)) {
+    countsNode <- colSums(y)
+    maxCounts <- max(countsNode)
+    equalMaxCounts <- maxCounts == countsNode
 
-  if (sum(equalMaxCounts) == 1) {
-    classIndex <- which(equalMaxCounts) #TODO check this
+    if (sum(equalMaxCounts) == 1) {
+      classIndex <- which(equalMaxCounts) #TODO check this
+    } else {
+      TODO("TODO multiple max tie breaking")
+    }
   } else {
-    TODO("TODO multiple max tie breaking")
+    countsNode <- sum(y)
+    classIndex <- 1
   }
 
   return(list(isLeaf = TRUE,
