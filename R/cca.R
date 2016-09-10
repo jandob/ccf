@@ -1,3 +1,9 @@
+#' @source Idea: \url{http://gastonsanchez.com/how-to/2014/01/15/Center-data-in-R/}
+center_colmeans <- function(x) {
+  x_center <- colMeans(x)
+  return(x - rep(x_center, rep.int(nrow(x), ncol(x))))
+}
+
 #' Canonical correlation analysis
 #'
 #' Canonical correlation analysis (CCA) finds pairs of vectors \eqn{(w,v)} such that projections
@@ -10,12 +16,15 @@
 #' @param epsilon Numeric value usued as tolerance threshold for rank reduction of the
 #' input matrices. Default is \code{1e-4}.
 #' @return A list containing the following components
-#'         \item{xcoef}{Estimated estimated coefficients for the \code{x} variable.}
-#'         \item{ycoef}{Estimated estimated coefficients for the \code{y} variable.}
-#'         \item{cor}{Matrix with correlation coefficients.}
+#' \itemize{
+#'   \item{xcoef}{Estimated estimated coefficients for the \code{x} variable.}
+#'   \item{ycoef}{Estimated estimated coefficients for the \code{y} variable.}
+#'   \item{cor}{Matrix with correlation coefficients.}
+#' }
 #' @examples
 #' library(MASS)
 #' library(pracma)
+#'
 #' X <- mvrnorm(1000, mu = c(0, 0), Sigma = eye(2))
 #' cca <- canonical_correlation_analysis(X, X)
 #' cca
@@ -25,84 +34,73 @@
 #' cca <- canonical_correlation_analysis(X, X)
 #' cca
 #' @export
-canonical_correlation_analysis = function(X, Y, epsilon = 1e-4) {
-  if (!is.matrix(X) || !is.matrix(Y)) {
-    stop("Arguments 'X' and 'Y' must be of type matrix.")
+canonical_correlation_analysis = function(x, y, epsilon = 1e-4) {
+  if (!is.matrix(x) || !is.matrix(y)) {
+    stop("Arguments 'x' and 'y' must be of type matrix.")
   }
 
-  # alternative
-  #cca = cancor(X, as.matrix(Y))
-
-  #X = as.matrix(X)
-  #Y = as.matrix(Y)
-  # colMeans() from http://gastonsanchez.com/how-to/2014/01/15/Center-data-in-R/
-  center_colmeans <- function(x) {
-    x_center = colMeans(x)
-    x - rep(x_center, rep.int(nrow(x), ncol(x)))
-  }
   # mean centering
-  X = center_colmeans(X)
-  Y = center_colmeans(Y)
+  x <- center_colmeans(x)
+  y <- center_colmeans(y)
 
   # QR decomposition (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
-  qr_decomp = qr(X)
-  q_X = qr.Q(qr_decomp)
-  r_X = qr.R(qr_decomp)
-  #p_X = qr_decomp$pivot
-  qr_decomp = qr(Y)
-  q_Y = qr.Q(qr_decomp)
-  r_Y = qr.R(qr_decomp)
-  #p_Y = qr_decomp$pivot
+  qr_decomp_x <- qr(x)
+  q_x <- qr.Q(qr_decomp_x)
+  r_x <- qr.R(qr_decomp_x)
+
+  qr_decomp_y <- qr(y)
+  q_y <- qr.Q(qr_decomp_y)
+  r_y <- qr.R(qr_decomp_y)
 
   # reduce Q and R to full rank
   # TODO check if diag does the same as in matlab
-  rank_X = sum(abs(diag(r_X)) >= (epsilon * abs(r_X[1, 1])))
-  rank_Y = sum(abs(diag(r_Y)) >= (epsilon * abs(r_Y[1, 1])))
+  rank_x <- qr_decomp_x$rank
+  rank_y <- qr_decomp_y$rank
+
   # TODO if rank == 0
 
-  if (rank_X < ncol(X)) {
-    q_X = q_X[, 1:rank_X]
+  if (rank_x < ncol(x)) {
+    q_x <- q_x[, 1:rank_x]
   }
-  r_X = r_X[1:rank_X,1:rank_X]
-  if (rank_Y < ncol(Y)) {
-    q_Y = q_Y[, 1:rank_Y]
-  }
-  r_Y = r_Y[1:rank_Y,1:rank_Y]
+  r_x <- r_x[1:rank_x, 1:rank_x]
 
-  number_of_coefficient_pairs = min(rank_X, rank_Y)
+  if (rank_y < ncol(y)) {
+    q_y <- q_y[, 1:rank_y]
+  }
+  r_y <- r_y[1:rank_y,1:rank_y]
+
+  number_of_coefficient_pairs = min(rank_x, rank_y)
 
   # select which decomposition is faster
-  if (rank_X >= rank_Y) {
-    svd = svd(t(q_X) %*% q_Y)
-    L = svd$u
-    D = svd$d
-    M = svd$v
+  if (rank_x >= rank_y) {
+    svd <- svd(t(q_x) %*% q_y)
+    L <- svd$u
+    D <- svd$d
+    M <- svd$v
   } else {
-    svd = svd(t(q_Y) %*% q_X)
-    M = svd$u
-    D = svd$d
-    L = svd$v
+    svd <- svd(t(q_y) %*% q_x)
+    M <- svd$u
+    D <- svd$d
+    L <- svd$v
   }
-  # remove meaningless components
-  #L = L[,1:number_of_coefficient_pairs]
-  #M = M[,1:number_of_coefficient_pairs]
 
-  # note solve(X) == X^-1
-  # A = mldivide(r_X, L[,1:number_of_coefficient_pairs] * sqrt(nrow(X)-1)) #version from MATLAB
-  A = solve(r_X) %*% L[, 1:number_of_coefficient_pairs] * sqrt(nrow(X) - 1)
-  B = solve(r_Y) %*% M[, 1:number_of_coefficient_pairs] * sqrt(nrow(X) - 1)
-
-  correlations = diag(D)
+  # Remove meaningless components in L and M
+  # Note solve(x) == x^-1
+  A <- solve(r_x, L[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1))
+  B <- solve(r_y, M[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1))
 
   # restore full size
-  A = rbind(A, matrix(0,ncol(X) - rank_X, number_of_coefficient_pairs))
-  B = rbind(B, matrix(0,ncol(Y) - rank_Y, number_of_coefficient_pairs))
+  A <- rbind(A, matrix(0, ncol(x) - rank_x, number_of_coefficient_pairs))
+  B <- rbind(B, matrix(0, ncol(y) - rank_y, number_of_coefficient_pairs))
+
+  correlations <- diag(D)
 
   # normalize (needed?)
-  A = apply(A, 1, function(x) {x / sqrt(colSums(A ^ 2))}) #MATLAB: bsxfun(@rdivide,projMat,sqrt(sum(projMat.^2,1)));
+  A <- apply(A, 1, function(x) {x / sqrt(colSums(A ^ 2))})
+  B <- apply(B, 1, function(x) {x / sqrt(colSums(B ^ 2))})
   # TODO svd returns negative matrix in MATLAB
 
-  l = list(xcoef = as.matrix(A), ycoef = as.matrix(B), cor = as.matrix(correlations))
-  return(l)
-  #TODO
+  return(list(xcoef = as.matrix(A),
+              ycoef = as.matrix(B),
+              cor = as.matrix(diag(D))))
 }
