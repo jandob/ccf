@@ -11,11 +11,13 @@ eps <- 1 - 3 * ((4 / 3) - 1)
 one_hot_encode <- function(data) {
   if (!is.data.frame(data)) {
     data <- data.frame(data)
-    colnames(data) <- "label"
+    colnames(data) <- "class"
   }
-  data$label <- as.factor(data$label)
+
+  data$class <- as.factor(data$class)
+
   # This trick only works with factors
-  return(model.matrix(~label - 1, data = data))
+  return(model.matrix(~ class - 1, data = data))
 }
 
 one_hot_decode <- function(X_one_hot) {
@@ -31,6 +33,8 @@ TODO <- function(message = "TODO", return = NULL) {
 
   return(return)
 }
+
+#' @export
 generate_2d_data_plot <- function(data = NULL,
                                   data_raster = NULL,
                                   interpolate = F,
@@ -96,6 +100,7 @@ plot_decision_surface <- function(model, X, Y, title = NULL,
 }
 
 #' @importFrom stats predict
+#' @export
 get_missclassification_rate <- function(model, data_test, ...) {
   predictions <- as.matrix(stats::predict(model, data_test, ...))
   # TODO use formula instead of last column

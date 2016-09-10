@@ -46,13 +46,12 @@ canonical_correlation_forest = function(x, y = NULL,
 #' @export
 canonical_correlation_forest.default = function(x, y = NULL,
                                                 ntree = 200, verbose = FALSE, ...) {
-  forest = vector(mode = "list", length = ntree)
+  forest <- vector(mode = "list", length = ntree)
 
   if (is.null(y)) {
     stop("CCF requires y variable.")
   }
 
-  # TODO: one_hot_encoding
   if (is.factor(y)) {
     y_encoded <- one_hot_encode(y)
     y_use <- y_encoded
@@ -64,27 +63,22 @@ canonical_correlation_forest.default = function(x, y = NULL,
     y_use <- y
   }
 
-
   for (i in 1:ntree) {
     if (verbose) {
-      cat("Training tree", i, "of", ntree)
+      cat("Training tree", i, "of", ntree, "\n")
     }
 
-    sample_idx = sample(nrow(x), size = nrow(x), replace = TRUE)
+    sample_idx <- sample(nrow(x), size = nrow(x), replace = TRUE)
 
-    x_bag = x[sample_idx, , drop = FALSE]
+    x_bag <- x[sample_idx, , drop = FALSE]
 
-    if (is.vector(y)) {
+    if (is.vector(y_use)) {
       y_bag <- y_use[sample_idx, drop = FALSE]
     } else {
       y_bag <- y_use[sample_idx, , drop = FALSE]
     }
 
-    forest[[i]] = canonical_correlation_tree(x_bag, y_bag)
-
-    #TODO: remove commented code
-    #YBag_decoded = Y[sample_idx]
-    #plotCCT(forest[[i]], XBag, YBag_decoded)
+    forest[[i]] <- canonical_correlation_tree(x_bag, y_bag)
   }
 
   model <- structure(list(x = x, y = y, y_encoded = y_encoded,

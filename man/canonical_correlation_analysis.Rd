@@ -2,37 +2,44 @@
 % Please edit documentation in R/cca.R
 \name{canonical_correlation_analysis}
 \alias{canonical_correlation_analysis}
-\title{Canonical Correlation Analysis}
+\title{Canonical correlation analysis}
 \usage{
-canonical_correlation_analysis(X, Y, epsilon = 1e-04)
+canonical_correlation_analysis(x, y, epsilon = 1e-04)
 }
 \arguments{
-\item{X}{numeric matrix (n * p) wiht n observations of p variables}
+\item{x}{Matrix of size n-by-p with n observations from p variables.}
 
-\item{Y}{muneric matrix (n * q) wiht n observations of q variables}
+\item{y}{Matrix of size n-by-p with n observations from p variables.}
 
-\item{epsilon}{numeric scalar tolerance for rank reduction of the
-input matrices}
+\item{epsilon}{Numeric value usued as tolerance threshold for rank reduction of the
+input matrices. Default is \code{1e-4}.}
 }
 \value{
 A list containing the following components
-        \item{xcoef}{Estimated estimated coefficients for the X variables.}
-        \item{ycoef}{Estimated estimated coefficients for the X variables.}
-        \item{cor}{Matrix of correlations.}
+\itemize{
+  \item{xcoef}{Estimated estimated coefficients for the \code{x} variable.}
+  \item{ycoef}{Estimated estimated coefficients for the \code{y} variable.}
+  \item{cor}{Matrix with correlation coefficients.}
+}
 }
 \description{
-CCA will find pairs of vectors \eqn{(w,v)} such that projections \eqn{Xw} and \eqn{Yv} have
-maximal possible correlations (the pairs will be ordered in the order of
-decreasing correlations). Projection vectors are normalized such that the
+Canonical correlation analysis (CCA) finds pairs of vectors \eqn{(w,v)} such that projections
+\eqn{Xw} and \eqn{Yv} have maximal possible correlations. The pairs are ordered in decreasing
+order of the correlations. In addition, projection vectors are normalized such that the
 variance of \eqn{Xw} and of \eqn{Yv} is equal to \eqn{1}. This means that projections are
-not only correlated, but "on the same scale" and hence can be directly
-compared.
+not only correlated, but "on the same scale" and hence can be directly compared.
 }
 \examples{
 library(MASS)
 library(pracma)
-X = mvrnorm(1000, c(0,0), eye(2))
-cca = canonical_correlation_analysis(X, X)
 
+X <- mvrnorm(1000, mu = c(0, 0), Sigma = eye(2))
+cca <- canonical_correlation_analysis(X, X)
+cca
+
+X <- mvrnorm(1000, mu = c(1, 2),
+             Sigma = matrix(c(1.5, 0.5, 0.5, 1.5), ncol = 2))
+cca <- canonical_correlation_analysis(X, X)
+cca
 }
 

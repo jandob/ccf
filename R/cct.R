@@ -127,8 +127,13 @@ find_best_split = function(X, Y) {
 canonical_correlation_tree = function(X, Y,
                                       depth = 0,
                                       minPointsForSplit = 2, maxDepthSplit = Inf, ancestralProbs = NULL) {
-  #X = as.matrix(X)
-  #Y = as.matrix(Y)
+  if (is.data.frame(X)) {
+    X <- as.matrix(X)
+  }
+  if (is.data.frame(Y)) {
+    Y <- as.matrix(Y)
+  }
+
   if (nrow(X) == 1
       || nrow(X) < minPointsForSplit
       || depth > maxDepthSplit) {
@@ -141,7 +146,7 @@ canonical_correlation_tree = function(X, Y,
     if (sum(abs(colSums(Y)) > 1e-12 ) == 1) {
       return(setupLeaf(Y))
     }
-  } else if ( any(Y) ) {
+  } else if (all(Y == 0)) {
     # only one column in Y and all zeros
     # ie binary classification
     return(setupLeaf(Y))

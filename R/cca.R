@@ -11,8 +11,10 @@ center_colmeans <- function(x) {
 #' order of the correlations. In addition, projection vectors are normalized such that the
 #' variance of \eqn{Xw} and of \eqn{Yv} is equal to \eqn{1}. This means that projections are
 #' not only correlated, but "on the same scale" and hence can be directly compared.
-#' @param x Matrix of size n-by-p with n observations from p variables.
-#' @param y Matrix of size n-by-p with n observations from p variables.
+#' @param x Matrix of size n-by-p with n observations from p variables. Alternatively, data
+#' frames and numeric vectors are supported and automatically converted.
+#' @param y Matrix of size n-by-p with n observations from p variables. Alternatively, data
+#' frames and numeric vectors are supported and automatically converted.
 #' @param epsilon Numeric value usued as tolerance threshold for rank reduction of the
 #' input matrices. Default is \code{1e-4}.
 #' @return A list containing the following components
@@ -34,9 +36,16 @@ center_colmeans <- function(x) {
 #' cca <- canonical_correlation_analysis(X, X)
 #' cca
 #' @export
-canonical_correlation_analysis = function(x, y, epsilon = 1e-4) {
+canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
+  if (is.data.frame(x) || is.vector(x)) {
+    x <- as.matrix(x)
+  }
+  if (is.data.frame(y) || is.vector(y)) {
+    y <- as.matrix(y)
+  }
+
   if (!is.matrix(x) || !is.matrix(y)) {
-    stop("Arguments 'x' and 'y' must be of type matrix.")
+    stop("Arguments 'x' and 'y' must be of type matrix or data frame.")
   }
 
   # mean centering
