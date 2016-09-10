@@ -18,14 +18,16 @@
 #' arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
 #' @rdname ccf
 #' @export
-canonical_correlation_forest = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest = function(x, y = NULL,
+                                        ntree = 200, verbose = FALSE, ...) {
   UseMethod("canonical_correlation_forest", x)
 }
 
 
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.default = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest.default = function(x, y = NULL,
+                                                ntree = 200, verbose = FALSE, ...) {
   forest = vector(mode = "list", length = ntree)
 
   if (is.null(y)) {
@@ -57,8 +59,9 @@ canonical_correlation_forest.default = function(x, y = NULL, ntree = 200, verbos
     #plotCCT(forest[[i]], XBag, YBag_decoded)
   }
 
-  model = structure(list(x = x, y = y, forest = forest),
-                    class = "canonical_correlation_forest")
+  model <- structure(list(x = x, y = y,
+                          ntree = ntree, forest = forest),
+                     class = "canonical_correlation_forest")
   return(model)
 }
 

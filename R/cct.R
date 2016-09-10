@@ -1,19 +1,19 @@
-setupLeaf = function(Y) {
-  countsNode = colSums(Y)
-  maxCounts = max(countsNode)
-  equalMaxCounts = maxCounts == countsNode
+setupLeaf = function(y) {
+  countsNode <- colSums(y)
+  maxCounts <- max(countsNode)
+  equalMaxCounts <- maxCounts == countsNode
+
   if (sum(equalMaxCounts) == 1) {
-    classIndex = which(equalMaxCounts) #TODO check this
+    classIndex <- which(equalMaxCounts) #TODO check this
   } else {
     TODO("TODO multiple max tie breaking")
   }
-  return(list(
-    isLeaf = T,
-    classIndex = classIndex,
-    trainingCounts = countsNode
-  ))
 
+  return(list(isLeaf = TRUE,
+              classIndex = classIndex,
+              trainingCounts = countsNode))
 }
+
 #' @importFrom utils head tail
 find_best_split = function(X, Y) {
   numberOfProjectionDirections = ncol(X)
@@ -102,6 +102,8 @@ find_best_split = function(X, Y) {
 #' @param maxDepthSplit Optional parameter controlling the construction of leaves after a
 #' certain depth (default: \code{Inf}). {If the current depth is greater than this value,
 #' a leaf is constructed.
+#' @param ancestralProbs Probabilities of ancestors. Defualt is \code{NULL} as these are
+#' then calculated automatically.
 #' @return Function returns an object of class \code{canonical_correlation_tree},
 #' where the object is a list containing at the following components:
 #' \itemize{
@@ -118,19 +120,19 @@ find_best_split = function(X, Y) {
 #' @export
 canonical_correlation_tree = function(X, Y,
                                       depth = 0,
-                                      minPointsForSplit = 2, maxDepthsplit = Inf) {
+                                      minPointsForSplit = 2, maxDepthSplit = Inf, ancestralProbs = NULL) {
   #X = as.matrix(X)
   #Y = as.matrix(Y)
   if (nrow(X) == 1
-      || nrow(X) < options$minPointsForSplit
-      || depth > options$maxDepthsplit) {
+      || nrow(X) < minPointsForSplit
+      || depth > maxDepthSplit) {
     # Return if one training point or max tree size options fulfilled
     return(setupLeaf(Y))
   } else if (ncol(Y) > 1) {
     # Return if pure node
     # TODO Zahl aus dem Hut?
     # Check if only one class is represented.
-    if (sum( abs(colSums(Y)) > 1e-12 ) == 1) {
+    if (sum(abs(colSums(Y)) > 1e-12 ) == 1) {
       return(setupLeaf(Y))
     }
   } else if ( any(Y) ) {
@@ -176,10 +178,10 @@ canonical_correlation_tree = function(X, Y,
   countsNode = colSums(Y)
   nonZeroCounts = sum(countsNode > 0)
   uniqueNonZeroCounts = length(countsNode > 0)
-  if (uniqueNonZeroCounts == nonZeroCounts || is.null(options$ancestralProbs)) {
-    options$ancestralProbs = countsNode/sum(countsNode)
+  if (uniqueNonZeroCounts == nonZeroCounts || is.null(ancestralProbs)) {
+    ancestralProbs = countsNode/sum(countsNode)
   } else {
-    options$ancestralProbs = rbind(options$ancestralProbs, countsNode/sum(countsNode))
+    ancestralProbs = rbind(ancestralProbs, countsNode/sum(countsNode))
   }
   treeLeft = canonical_correlation_tree(X[best_split$lessThanPartPoint, ,drop = F],
                                         Y[best_split$lessThanPartPoint, ,drop = F],
@@ -231,6 +233,7 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   }
   return(currentNodeClasses)
 }
+
 #' @export
 plot.canonical_correlation_tree = function(x, dataX, dataY, ...) {
   TODO("check if plotable", return = T)
