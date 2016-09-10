@@ -129,7 +129,7 @@ canonical_correlation_tree = function(X, Y,
       || depth > maxDepthSplit) {
     # Return if one training point or max tree size options fulfilled
     return(setupLeaf(Y))
-  } else if (ncol(Y) > 1) {
+  } else if (is.vector(Y) && ncol(Y) > 1) {
     # Return if pure node
     # TODO Zahl aus dem Hut?
     # Check if only one class is represented.
