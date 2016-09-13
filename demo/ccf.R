@@ -10,7 +10,7 @@ d_test <- d[1001:10000,]
 # sample 1000 d points
 #d <- d[sample(nrow(d), 1000), ]
 
-generate_2d_d_plot(d_train)
+generate_2d_data_plot(d_train)
 
 
 # convert to matrices
