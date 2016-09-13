@@ -11,17 +11,17 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 ```
-[![Build Status](https://travis-ci.org/jandob/ccf.svg?branch=master)](https://travis-ci.org/jandob/ccf) 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/ccf)](http://cran.r-project.org/package=ccf) 
+[![Build Status](https://travis-ci.org/jandob/ccf.svg?branch=master)](https://travis-ci.org/jandob/ccf)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ccf)](https://cran.r-project.org/package=ccf)
 [![Coverage Status](https://img.shields.io/codecov/c/github/jandob/ccf/master.svg)](https://codecov.io/github/jandob/ccf?branch=master)
 
 The package `ccf` implements canonical correlations forests (CCFs) for use inside R. These present a novel classification algorithm for machine learning tasks, that are often able outperform common methods for predictive classifiers. The CCF algorithm is based on an ensemble of decision trees together with a canonical correlation analysis. The purpose is to de-correlated individual trees and thus improve the predictive performance.
 
 ## Brief summary of CCF algorithm
 
-A decision tree is a predictive model that sequentially divides the input space, each for which a local classification and regression model is calculated (e.g. with a simple majority vote). Thereby, it generates a tree-like structure, whose leaves usually group data points belonging ideally to the same class. An can often achieve a better performance by combining individual trees and average over them. This is known as a decision forest or random forest. 
+A decision tree is a predictive model that sequentially divides the input space, each for which a local classification and regression model is calculated (e.g. with a simple majority vote). Thereby, it generates a tree-like structure, whose leaves usually group data points belonging ideally to the same class. An can often achieve a better performance by combining individual trees and average over them. This is known as a decision forest or random forest.
 
-A canonical correlation forest is a now tree ensemble method. While the concept is similar to a forest, its specific characteristics often achieve a favorable predictive performance. It trains the trees by using a canonical correlation analysis (CCA) in order to find a feature projection that gives a maximal correlation between features. It then chooses the best split in this projected space. 
+A canonical correlation forest is a now tree ensemble method. While the concept is similar to a forest, its specific characteristics often achieve a favorable predictive performance. It trains the trees by using a canonical correlation analysis (CCA) in order to find a feature projection that gives a maximal correlation between features. It then chooses the best split in this projected space.
 
 For a thorough explanation and derivation refer to:
 
@@ -37,7 +37,7 @@ The most important functions in `ccf` are:
 
 * `plot` visualizates the underlying decision surface.
 
-To see examples of these functions in use, check out the help pages, the demos and this README (which is identical to the vignette). 
+To see examples of these functions in use, check out the help pages, the demos and this README (which is identical to the vignette).
 
 ## Installation
 
@@ -53,7 +53,7 @@ devtools::install_github("jandob/ccf")
 # devtoos::install_local("ccf_0.1.0.tar.gz")
 ```
 
-Notes: 
+Notes:
 
 * In the case of option 2, you have to specify the path either to the directory of `ccf` or to the bundled archive **ccf_1.0.0.tar.gz**
 
@@ -61,7 +61,7 @@ Notes:
 
 ## Usage
 
-This section shows the basic functionality of how to train a canonical correlation forests and make predictions based on it. First, load the corresponding package `ccf`. 
+This section shows the basic functionality of how to train a canonical correlation forests and make predictions based on it. First, load the corresponding package `ccf`.
 
 ```{r, message=FALSE}
 library(ccf)
@@ -71,7 +71,7 @@ The interface follows common R conventions as used by other machine learning rou
 
 ```{r}
 # load sample dataset
-data(spirals) 
+data(spirals)
 
 d_train <- spirals[1:1000, ]
 d_test <- spirals[-(1:1000), ]
