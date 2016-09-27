@@ -33,8 +33,6 @@ TODO <- function(message = "TODO", return = NULL) {
 
   return(return)
 }
-
-#' @export
 generate_2d_data_plot <- function(data = NULL,
                                   data_raster = NULL,
                                   interpolate = F,
@@ -73,6 +71,7 @@ generate_2d_data_plot <- function(data = NULL,
 }
 
 #' @importFrom stats predict
+#' @export
 plot_decision_surface <- function(model, X, Y, title = NULL,
                                   interpolate = FALSE, ...) {
   data <- data.frame(x = X[, 1], y = X[, 2], z = Y)

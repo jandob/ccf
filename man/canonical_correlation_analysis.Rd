@@ -7,9 +7,11 @@
 canonical_correlation_analysis(x, y, epsilon = 1e-04)
 }
 \arguments{
-\item{x}{Matrix of size n-by-p with n observations from p variables.}
+\item{x}{Matrix of size n-by-p with n observations from p variables. Alternatively, data
+frames and numeric vectors are supported and automatically converted.}
 
-\item{y}{Matrix of size n-by-p with n observations from p variables.}
+\item{y}{Matrix of size n-by-p with n observations from p variables. Alternatively, data
+frames and numeric vectors are supported and automatically converted.}
 
 \item{epsilon}{Numeric value usued as tolerance threshold for rank reduction of the
 input matrices. Default is \code{1e-4}.}

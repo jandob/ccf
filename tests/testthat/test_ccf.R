@@ -12,7 +12,8 @@ test_that("ccf 2d", {
             2 * ones(nrow(diagonal), 1),
             3 * ones(nrow(diagonal), 1))
   X = as.matrix(X)
-  ccf = canonical_correlation_forest(X, one_hot_encode(Y), ntree = 1)
+  set.seed(42)
+  ccf = canonical_correlation_forest(X, one_hot_encode(Y), ntree = 10)
   error_ccf = get_missclassification_rate(ccf, cbind(X, Y))
   expect_that(error_ccf, equals(0))
 })

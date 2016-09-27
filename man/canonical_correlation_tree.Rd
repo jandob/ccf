@@ -5,7 +5,8 @@
 \title{Computes a canonical correlation tree}
 \usage{
 canonical_correlation_tree(X, Y, depth = 0, minPointsForSplit = 2,
-  maxDepthSplit = Inf, ancestralProbs = NULL)
+  maxDepthSplit = Inf, xVariationTolerance = 1e-10,
+  projectionBootstrap = FALSE, ancestralProbs = NULL)
 }
 \arguments{
 \item{X}{Predictor matrix of size \eqn{n \times p} with \eqn{n} observations and \eqn{p}
@@ -24,7 +25,12 @@ constructed.}
 certain depth (default: \code{Inf}). If the current depth is greater than this value,
 a leaf is constructed.}
 
-\item{ancestralProbs}{Probabilities of ancestors. Defualt is \code{NULL} as these are
+\item{xVariationTolerance}{Features with variance less than this value are not considered
+for splitting at tree nodes. (default \code{1e-10})}
+
+\item{projectionBootstrap}{Use projection bootstrapping. (default \code{FALSE})}
+
+\item{ancestralProbs}{Probabilities of ancestors. Default is \code{NULL} as these are
 then calculated automatically.}
 }
 \value{

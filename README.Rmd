@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 )
 ```
 [![Build Status](https://travis-ci.org/jandob/ccf.svg?branch=master)](https://travis-ci.org/jandob/ccf)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/ccf)](https://cran.r-project.org/package=ccf)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/ccf)](http://cran.r-project.org/package=ccf)
 [![Coverage Status](https://img.shields.io/codecov/c/github/jandob/ccf/master.svg)](https://codecov.io/github/jandob/ccf?branch=master)
 
 The package `ccf` implements canonical correlations forests (CCFs) for use inside R. These present a novel classification algorithm for machine learning tasks, that are often able outperform common methods for predictive classifiers. The CCF algorithm is based on an ensemble of decision trees together with a canonical correlation analysis. The purpose is to de-correlated individual trees and thus improve the predictive performance.
@@ -74,21 +74,21 @@ The interface follows common R conventions as used by other machine learning rou
 data(spirals)
 
 d_train <- spirals[1:1000, ]
-d_test <- spirals[-(1:1000), ]
+d_test <- tail(spirals, 1000)
 
 # compute classifier on training data
 ## variant 1: matrix input
-m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 200)
+m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 10)
 ## variant 2: formula notation
-m2 <- canonical_correlation_forest(class ~ ., d_train)
+#m2 <- canonical_correlation_forest(class ~ ., d_train)
 
 # compute predictive accuracy
-get_missclassification_rate(m1, d_test)
-get_missclassification_rate(m1, d_test)
-```
+#get_missclassification_rate(m1, d_test)
+#get_missclassification_rate(m2, d_test)
 
-```{r}
-plot_ccf <- plot_decision_surface(model, X, Y, title = "CCF with 200 trees")
+# plot the decision surface of the classifier
+ccf_plot <- plot_decision_surface(
+  m1, d_test[, c("x", "y")], d_test$class, title = "CCF with 20 trees")
 ```
 
 ## License
