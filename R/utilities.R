@@ -69,7 +69,18 @@ generate_2d_data_plot <- function(data = NULL,
 
   return(g)
 }
-
+#' Helper function to plot classifier decision surface.
+#'
+#' This function generates a plot (ggplot2) of the decision surface for a 2d classifier.
+#' @param model a model object for which prediction is desired. E.g. object of class
+#' \code{canonical_correlation_forrest}, \code{canonical_correlation_tree},
+#' \code{tree} or \code{randomForest}.
+#' @param X Numeric matrix (n * 2) with n observations of 2 variables
+#' @param Y Numeric matrix with n observations of 1 variable
+#' @param title Title text for the plot.
+#' @param interpolate If TRUE interpolate linearly, if FALSE (the default)
+#' don't interpolate.
+#' @param ...	Further arguments passed to model.predict()
 #' @importFrom stats predict
 #' @export
 plot_decision_surface <- function(model, X, Y, title = NULL,
@@ -93,7 +104,12 @@ plot_decision_surface <- function(model, X, Y, title = NULL,
                                       title = title)
   return(plot_object)
 }
-
+#' Helper function to print prediction accuracy for a model.
+#' @param model a model object for which prediction is desired. E.g. object of class
+#' \code{canonical_correlation_forrest}, \code{canonical_correlation_tree},
+#' \code{tree} or \code{randomForest}.
+#' @param data_test A data frame or a matrix containing the test data.
+#' @param ...	Further arguments passed to model.predict()
 #' @importFrom stats predict
 #' @export
 get_missclassification_rate <- function(model, data_test, ...) {
