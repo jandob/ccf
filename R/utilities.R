@@ -43,10 +43,6 @@ generate_2d_data_plot <- function(data = NULL,
     stop("ggplot2 needed for plotting to work. Please install it.",
          call. = FALSE)
   }
-  #x_min <- min(data$x, data_raster$x)
-  #x_max <- max(data$x, data_raster$x)
-  #y_min <- min(data$y, data_raster$y)
-  #y_max <- max(data$y, data_raster$y)
   blank <- ggplot2::element_blank()
   g <- ggplot2::ggplot() +
     ggplot2::theme_bw(base_size = 15) +

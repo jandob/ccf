@@ -67,7 +67,6 @@ canonical_correlation_forest.default = function(x, y = NULL,
     if (verbose) {
       cat("Training tree", i, "of", ntree, "\n")
     }
-
     sample_idx <- sample(nrow(x), size = nrow(x), replace = TRUE)
 
     x_bag <- x[sample_idx, , drop = FALSE]
@@ -147,7 +146,7 @@ predict.canonical_correlation_forest = function(object, newdata, verbose = FALSE
     cat("\nMajority vote")
   }
 
-  treePredictions <- apply(treePredictions, 1, function(row) { names(max(table(row))) })
+  treePredictions <- apply(treePredictions, 1, function(row) { names(which.max(table(row)))})
 
   return(treePredictions)
 }

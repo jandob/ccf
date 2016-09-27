@@ -2,23 +2,36 @@ context("Canonical Correlation Analysis")
 
 library(pracma)
 
-
-test_that("ccf", {
-  diagonal <- as.data.frame(matrix(c(0, 0, 1, 1, 2, 2), ncol = 2, byrow = TRUE))
+test_that("cct 2d", {
+  diagonal = as.data.frame(rbind(c(0, 0), c(1, 1), c(2, 2)))
   colnames(diagonal) = c("x", "y")
+  diagonal_upper = diagonal_lower = diagonal
+  diagonal_upper$y = diagonal$y + 1
+  diagonal_lower$x = diagonal$x + 1
+  X = rbind(diagonal, diagonal_upper, diagonal_lower)
+  Y = rbind(1 * ones(nrow(diagonal), 1),
+            2 * ones(nrow(diagonal), 1),
+            3 * ones(nrow(diagonal), 1))
+  X = as.matrix(X)
+  cct = canonical_correlation_tree(X, one_hot_encode(Y))
+  error_cct = get_missclassification_rate(cct, cbind(X, Y))
+  expect_that(error_cct, equals(0))
+})
 
-  diagonal_upper <- diagonal_lower <- diagonal
-  diagonal_upper$y <- diagonal$y + 1
-  diagonal_lower$x <- diagonal$x + 1
-
-  X <- rbind(diagonal, diagonal_upper, diagonal_lower)
-  Y <- matrix(c(rep(1, nrow(diagonal)),
-                rep(2, nrow(diagonal)),
-                rep(3, nrow(diagonal))),
-              ncol = 1)
-  X <- as.matrix(X)
-
-  cct <- canonical_correlation_tree(X, one_hot_encode(Y))
-
-  plot(cct, X, Y)
+test_that("cct 3d", {
+  diagonal = as.data.frame(rbind(c(0, 0, 0), c(1, 1, 1), c(2, 2, 2)))
+  colnames(diagonal) = c("x", "y", "z")
+  diagonal_upper = diagonal_lower = diagonal_front = diagonal
+  diagonal_upper$y = diagonal$y + 1
+  diagonal_lower$x = diagonal$x + 1
+  diagonal_front$z = diagonal$z + 1
+  X = rbind(diagonal, diagonal_upper, diagonal_lower, diagonal_front)
+  Y = rbind(1 * ones(nrow(diagonal), 1),
+            2 * ones(nrow(diagonal), 1),
+            3 * ones(nrow(diagonal), 1),
+            4 * ones(nrow(diagonal), 1))
+  X = as.matrix(X)
+  cct = canonical_correlation_tree(X, one_hot_encode(Y))
+  error_cct = get_missclassification_rate(cct, cbind(X, Y))
+  expect_that(error_cct, equals(0))
 })

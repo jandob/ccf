@@ -53,26 +53,32 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
   y <- center_colmeans(y)
 
   # QR decomposition (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
-  qr_decomp_x <- qr(x)
+  qr_decomp_x <- qr(x, tol = epsilon)
   q_x <- qr.Q(qr_decomp_x)
   r_x <- qr.R(qr_decomp_x)
+  p_x <- qr_decomp_x$pivot
+  rank_x <- qr_decomp_x$rank
 
-  qr_decomp_y <- qr(y)
+  qr_decomp_y <- qr(y, tol = epsilon)
   q_y <- qr.Q(qr_decomp_y)
   r_y <- qr.R(qr_decomp_y)
-
-  # reduce Q and R to full rank
-  # TODO check if diag does the same as in matlab
-  rank_x <- qr_decomp_x$rank
+  p_y <- qr_decomp_y$pivot
   rank_y <- qr_decomp_y$rank
 
-  # TODO if rank == 0
+  # reduce Q and R to full rank
+  if (rank_x == 0) {
+    matrixA = matrix(0, ncol(x), 1)
+    matrixA[1, ] = 1
+    return(list(xcoef = matrixA,
+                ycoef = NULL,
+                cor = NULL)
+    )
+  }
 
   if (rank_x < ncol(x)) {
     q_x <- q_x[, 1:rank_x]
   }
   r_x <- r_x[1:rank_x, 1:rank_x]
-
   if (rank_y < ncol(y)) {
     q_y <- q_y[, 1:rank_y]
   }
@@ -95,8 +101,8 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
 
   # Remove meaningless components in L and M
   # Note solve(x) == x^-1
-  A <- solve(r_x, L[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1))
-  B <- solve(r_y, M[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1))
+  A <- solve(r_x) %*% L[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1)
+  B <- solve(r_y) %*% M[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1)
 
   # restore full size
   A <- rbind(A, matrix(0, ncol(x) - rank_x, number_of_coefficient_pairs))
@@ -104,12 +110,22 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
 
   correlations <- diag(D)
 
-  # normalize (needed?)
-  A <- apply(A, 1, function(x) {x / sqrt(colSums(A ^ 2))})
-  B <- apply(B, 1, function(x) {x / sqrt(colSums(B ^ 2))})
-  # TODO svd returns negative matrix in MATLAB
+  # restore order
+  A = A[p_x, , drop = FALSE]
+  B = B[p_y, , drop = FALSE]
 
-  return(list(xcoef = as.matrix(A),
-              ycoef = as.matrix(B),
-              cor = as.matrix(diag(D))))
+  # normalize
+  A = scale(A, center = FALSE, scale = sqrt(colSums(A ^ 2)))
+
+  # convert to matrices and restore dimension names
+  matrixA = as.matrix(A)
+  matrixB = as.matrix(B)
+  rownames(matrixA) = colnames(x)
+  rownames(matrixB) = colnames(y)
+
+  return(list(xcoef = matrixA,
+              ycoef = matrixB,
+              cor = as.matrix(correlations)) #TODO add dimnames
+  )
+
 }

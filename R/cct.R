@@ -172,10 +172,13 @@ canonical_correlation_tree = function(X, Y,
 
     #B = cca$ycoef # not used
     #p = cca$cor   # not used
+
     projection_matrix = cca$xcoef
 
     # U are the feature vectors in the projected space
+
     U = X %*% projection_matrix
+
     # U = -1*U # debug for MATLAB correspondence
 
     best_split = find_best_split(U, Y)
@@ -188,20 +191,28 @@ canonical_correlation_tree = function(X, Y,
   # each partition can have multiple classes
   countsNode = colSums(Y)
   nonZeroCounts = sum(countsNode > 0)
-  uniqueNonZeroCounts = length(countsNode > 0)
+  uniqueNonZeroCounts = length(unique(countsNode)[unique(countsNode) != 0])
   if (uniqueNonZeroCounts == nonZeroCounts || is.null(ancestralProbs)) {
     ancestralProbs = countsNode/sum(countsNode)
   } else {
     ancestralProbs = rbind(ancestralProbs, countsNode/sum(countsNode))
   }
-  treeLeft = canonical_correlation_tree(X[best_split$lessThanPartPoint, ,drop = F],
-                                        Y[best_split$lessThanPartPoint, ,drop = F],
-                                        depth = depth + 1,
-                                        minPointsForSplit = minPointsForSplit, maxDepthSplit = maxDepthSplit, ancestralProbs = ancestralProbs)
-  treeRight = canonical_correlation_tree(X[!best_split$lessThanPartPoint, ,drop = F],
-                                         Y[!best_split$lessThanPartPoint, ,drop = F],
-                                         depth = depth + 1,
-                                         minPointsForSplit = minPointsForSplit, maxDepthSplit = maxDepthSplit, ancestralProbs = ancestralProbs)
+  treeLeft = canonical_correlation_tree(
+    X[best_split$lessThanPartPoint, ,drop = F],
+    Y[best_split$lessThanPartPoint, ,drop = F],
+    depth = depth + 1,
+    minPointsForSplit = minPointsForSplit,
+    maxDepthSplit = maxDepthSplit,
+    ancestralProbs = ancestralProbs
+  )
+  treeRight = canonical_correlation_tree(
+    X[!best_split$lessThanPartPoint, ,drop = F],
+    Y[!best_split$lessThanPartPoint, ,drop = F],
+    depth = depth + 1,
+    minPointsForSplit = minPointsForSplit,
+    maxDepthSplit = maxDepthSplit,
+    ancestralProbs = ancestralProbs
+  )
 
   model = structure(
     list(isLeaf = F,
@@ -209,6 +220,7 @@ canonical_correlation_tree = function(X, Y,
          #indicesFeatures = indicesFeatures, #TODO features that the node got, needed for prediction; for now all nodes get all features
          decisionProjection = projection_matrix[,best_split$splitDir],
          partitionPoint = best_split$partitionPoint,
+         depth = depth,
          refLeftChild = treeLeft,
          refRightChild = treeRight
     )
