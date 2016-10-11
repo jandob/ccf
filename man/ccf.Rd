@@ -10,7 +10,7 @@ canonical_correlation_forest(x, y = NULL, ntree = 200, verbose = FALSE,
   ...)
 
 \method{canonical_correlation_forest}{default}(x, y = NULL, ntree = 200,
-  verbose = FALSE, ...)
+  verbose = FALSE, projectionBootstrap = FALSE, ...)
 
 \method{canonical_correlation_forest}{formula}(x, y = NULL, ntree = 200,
   verbose = FALSE, ...)
@@ -26,6 +26,8 @@ canonical_correlation_forest(x, y = NULL, ntree = 200, verbose = FALSE,
 printed to the output. Default is \code{FALSE}.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{projectionBootstrap}{Use projection bootstrapping. (default \code{FALSE})}
 }
 \value{
 returns an object of class "canonical_correlation_forest",

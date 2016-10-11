@@ -7,6 +7,7 @@
 #' @param ntree Number of trees the forest will be composed of
 #' @param verbose Optional argument to control if additional information are
 #' printed to the output. Default is \code{FALSE}.
+#' @param projectionBootstrap Use projection bootstrapping. (default \code{FALSE})
 #' @param ...	Further arguments passed to or from other methods.
 #' @return returns an object of class "canonical_correlation_forest",
 #' where an object of this class is a list containing the following
@@ -45,7 +46,8 @@ canonical_correlation_forest = function(x, y = NULL,
 #' @rdname ccf
 #' @export
 canonical_correlation_forest.default = function(x, y = NULL,
-                                                ntree = 200, verbose = FALSE, ...) {
+                                                ntree = 200, verbose = FALSE,
+                                                projectionBootstrap = FALSE, ...) {
   forest <- vector(mode = "list", length = ntree)
 
   if (is.null(y)) {
@@ -67,17 +69,24 @@ canonical_correlation_forest.default = function(x, y = NULL,
     if (verbose) {
       cat("Training tree", i, "of", ntree, "\n")
     }
-    sample_idx <- sample(nrow(x), size = nrow(x), replace = TRUE)
 
-    x_bag <- x[sample_idx, , drop = FALSE]
+    if (!projectionBootstrap) { # use (breiman's) tree bagging
 
-    if (is.vector(y_use)) {
-      y_bag <- y_use[sample_idx, drop = FALSE]
+      sample_idx <- sample(nrow(x), size = nrow(x), replace = TRUE)
+      x_bag <- x[sample_idx, , drop = FALSE]
+      if (is.vector(y_use)) {
+        y_bag <- y_use[sample_idx, drop = FALSE]
+      } else {
+        y_bag <- y_use[sample_idx, , drop = FALSE]
+      }
     } else {
-      y_bag <- y_use[sample_idx, , drop = FALSE]
+      # use projection bootstrapping; no sampling needed
+      x_bag <- x
+      y_bag <- y_use
     }
 
-    forest[[i]] <- canonical_correlation_tree(x_bag, y_bag)
+    forest[[i]] <- canonical_correlation_tree(x_bag, y_bag,
+                                              projectionBootstrap = projectionBootstrap)
   }
 
   model <- structure(list(x = x, y = y, y_encoded = y_encoded,

@@ -269,7 +269,7 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   }
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
-  X = as.matrix(newData[,1:nr_of_features, drop= FALSE], ncol = nr_of_features)
+  X = as.matrix(newData[,1:nr_of_features, drop = FALSE], ncol = nr_of_features)
 
   # TODO center_colmeans / input processing
 
@@ -281,12 +281,12 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint,] =
       predict.canonical_correlation_tree(tree$refLeftChild,
-                                       X[lessThanPartPoint,,drop=F])
+                                       X[lessThanPartPoint,,drop = FALSE])
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint,] =
       predict.canonical_correlation_tree(tree$refRightChild,
-                                       X[!lessThanPartPoint,,drop = F])
+                                       X[!lessThanPartPoint,,drop = FALSE])
   }
   return(currentNodeClasses)
 }
