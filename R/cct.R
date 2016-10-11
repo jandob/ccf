@@ -172,7 +172,7 @@ canonical_correlation_tree = function(
       # same class so setupLeaf
       return(setupLeaf(Y))
     }
-    # split int the centor of vector between the two points
+    # split in the centor of vector between the two points
     projection_matrix = t(X[2,, drop = F] - X[1, , drop = F])
     partitionPoint = 0.5 * (X[2, ] %*% projection_matrix +
                            X[1,] %*% projection_matrix)
@@ -244,12 +244,14 @@ canonical_correlation_tree = function(
     maxDepthSplit = maxDepthSplit,
     ancestralProbs = ancestralProbs
   )
-
+  if (ncol(X) != nrow(projection_matrix)) {
+    stop('hans')
+  }
   model = structure(
     list(isLeaf = F,
          trainingCounts = countsNode,
          #indicesFeatures = indicesFeatures, #TODO features that the node got, needed for prediction; for now all nodes get all features
-         decisionProjection = projection_matrix[,best_split$splitDir],
+         decisionProjection = projection_matrix[,best_split$splitDir, drop = FALSE],
          partitionPoint = best_split$partitionPoint,
          depth = depth,
          refLeftChild = treeLeft,
@@ -267,7 +269,7 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   }
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
-  X = as.matrix(newData[,1:nr_of_features], ncol = nr_of_features)
+  X = as.matrix(newData[,1:nr_of_features, drop= FALSE], ncol = nr_of_features)
 
   # TODO center_colmeans / input processing
 
