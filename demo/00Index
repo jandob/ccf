@@ -1,4 +1,4 @@
-cca   Examples for using the CCA method standalone.
-ccf   Examples for the ccf.
+cca_demo   Examples for using the CCA method standalone.
+ccf_demo   Examples for the ccf.
 dataset_demos   Examples using datasets.
 profiling   Shows how to profile the package.
