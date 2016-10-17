@@ -29,17 +29,19 @@ find_best_split = function(X, Y, xVariationTolerance = 1e-10) {
     # sort by the value of the current dimension (feature) i
     sortOrder = order(X[, i])
     X_sorted = X[sortOrder, i] # vector of values from dimension i
-    Ysorted = Y[sortOrder, ] # matrix of labels (also sorted according to current dimension)
-    # So we have something like this (Note that Y is actually one-hot encoded and therefore a matrix)
-    # X_sorted: 64  65   68    69    70   71   72   72   75   75   80    81   83   85
-    # Y_sorted: red blue green green blue red  red  blue red  blue green red  red  blue
+    # matrix of labels (also sorted according to current dimension)
+    Ysorted = Y[sortOrder, ]
+    # So we have something like this (Note that Y is actually one-hot encoded
+    # and therefore a matrix)
+    # X_sorted: 64  65   68    69    70   71   72   72   75   75   80    81   83   85 #nolint
+    # Y_sorted: red blue green green blue red  red  blue red  blue green red  red  blue #nolint
 
     # For every possible split_point (corresponds to value in X)
     # count the number of classes that occur in the partition
     # where X < split_point
     # e.g. for split_point = 72: (2 red, 2 blue, 1 green)
     LeftCumCounts = apply(Ysorted, 2, cumsum)
-    total_counts = utils::tail(LeftCumCounts,1)
+    total_counts = utils::tail(LeftCumCounts, 1)
     # Do the same for X > split_point.
     # We can just substract each row from total_counts
     RightCumCounts =
@@ -79,7 +81,6 @@ find_best_split = function(X, Y, xVariationTolerance = 1e-10) {
 
   # equalMaxIndices correspond to indices of splitGains
   equalMaxIndices = which(abs(splitGains - maxGain) < 10 * eps)
-  #splitDir = random_element(equalMaxIndices)
   splitDir = equalMaxIndices[1]
   splitIndex = splitIndices[splitDir]
 
@@ -89,7 +90,6 @@ find_best_split = function(X, Y, xVariationTolerance = 1e-10) {
   X_sorted = X_sorted - X_sortedLeftPartition
   partitionPoint = X_sorted[splitIndex] * 0.5 + X_sorted[splitIndex + 1] * 0.5
   partitionPoint = partitionPoint + X_sortedLeftPartition
-  # X_sorted = X_sorted + X_sortedLeftPartition
   lessThanPartPoint = X <= partitionPoint
   return(list(
     partitionPoint = partitionPoint,
@@ -173,9 +173,9 @@ canonical_correlation_tree = function(
       return(setupLeaf(Y))
     }
     # split in the centor of vector between the two points
-    projection_matrix = t(X[2,, drop = F] - X[1, , drop = F])
+    projection_matrix = t(X[2, , drop = F] - X[1, , drop = F]) #nolint
     partitionPoint = 0.5 * (X[2, ] %*% projection_matrix +
-                           X[1,] %*% projection_matrix)
+                           X[1, ] %*% projection_matrix)
     lessThanPartPoint = (X %*% projection_matrix) <= partitionPoint[1]
     best_split = list(partitionPoint = partitionPoint[1],
                       splitDir = 1,
@@ -183,8 +183,8 @@ canonical_correlation_tree = function(
   } else {
     if (projectionBootstrap) {
       sampleIndices = sample(nrow(X), size = nrow(X), replace = T)
-      XSampled = X[sampleIndices, , drop = F]
-      YSampled = Y[sampleIndices, , drop = F]
+      XSampled = X[sampleIndices, , drop = F] #nolint
+      YSampled = Y[sampleIndices, , drop = F] #nolint
       # Check if only one class is represented.
       if (sum( abs(colSums(YSampled)) > 1e-12 ) == 1) {
         return(setupLeaf(Y))
@@ -194,16 +194,11 @@ canonical_correlation_tree = function(
       cca = canonical_correlation_analysis(X, Y)
     }
 
-    #B = cca$ycoef # not used
-    #p = cca$cor   # not used
-
     projection_matrix = cca$xcoef
 
     # U are the feature vectors in the projected space
 
     U = X %*% projection_matrix
-
-    # U = -1*U # debug for MATLAB correspondence
 
     bUVaries = apply(U, 2, stats::var) > xVariationTolerance
     if (!any(bUVaries)) {
@@ -224,34 +219,34 @@ canonical_correlation_tree = function(
   nonZeroCounts = sum(countsNode > 0)
   uniqueNonZeroCounts = length(unique(countsNode)[unique(countsNode) != 0])
   if (uniqueNonZeroCounts == nonZeroCounts || is.null(ancestralProbs)) {
-    ancestralProbs = countsNode/sum(countsNode)
+    ancestralProbs = countsNode / sum(countsNode)
   } else {
-    ancestralProbs = rbind(ancestralProbs, countsNode/sum(countsNode))
+    ancestralProbs = rbind(ancestralProbs, countsNode / sum(countsNode))
   }
   treeLeft = canonical_correlation_tree(
-    X[best_split$lessThanPartPoint, ,drop = F],
-    Y[best_split$lessThanPartPoint, ,drop = F],
+    X[best_split$lessThanPartPoint, , drop = F], #nolint
+    Y[best_split$lessThanPartPoint, , drop = F], #nolint
     depth = depth + 1,
     minPointsForSplit = minPointsForSplit,
     maxDepthSplit = maxDepthSplit,
     ancestralProbs = ancestralProbs
   )
   treeRight = canonical_correlation_tree(
-    X[!best_split$lessThanPartPoint, ,drop = F],
-    Y[!best_split$lessThanPartPoint, ,drop = F],
+    X[!best_split$lessThanPartPoint, , drop = F], #nolint
+    Y[!best_split$lessThanPartPoint, , drop = F], #nolint
     depth = depth + 1,
     minPointsForSplit = minPointsForSplit,
     maxDepthSplit = maxDepthSplit,
     ancestralProbs = ancestralProbs
   )
-  if (ncol(X) != nrow(projection_matrix)) {
-    stop('hans')
-  }
   model = structure(
     list(isLeaf = F,
          trainingCounts = countsNode,
-         #indicesFeatures = indicesFeatures, #TODO features that the node got, needed for prediction; for now all nodes get all features
-         decisionProjection = projection_matrix[,best_split$splitDir, drop = FALSE],
+         #TODO features that the node got, needed for prediction;
+         # for now all nodes get all features
+         #indicesFeatures = indicesFeatures,
+         decisionProjection =
+           projection_matrix[, best_split$splitDir, drop = FALSE],
          partitionPoint = best_split$partitionPoint,
          depth = depth,
          refLeftChild = treeLeft,
@@ -269,7 +264,8 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   }
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
-  X = as.matrix(newData[,1:nr_of_features, drop = FALSE], ncol = nr_of_features)
+  X = as.matrix(
+    newData[, 1:nr_of_features, drop = FALSE], ncol = nr_of_features)
 
   # TODO center_colmeans / input processing
 
@@ -277,16 +273,16 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   U = X %*% tree$decisionProjection
   lessThanPartPoint = U <= tree$partitionPoint
 
-  currentNodeClasses = matrix(nrow = max(nrow(X),1))
+  currentNodeClasses = matrix(nrow = max(nrow(X), 1))
   if (any(lessThanPartPoint)) {
-    currentNodeClasses[lessThanPartPoint,] =
+    currentNodeClasses[lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refLeftChild,
-                                       X[lessThanPartPoint,,drop = FALSE])
+                                       X[lessThanPartPoint, ,drop = FALSE]) #nolint
   }
   if (any(!lessThanPartPoint)) {
-    currentNodeClasses[!lessThanPartPoint,] =
+    currentNodeClasses[!lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refRightChild,
-                                       X[!lessThanPartPoint,,drop = FALSE])
+                                       X[!lessThanPartPoint, ,drop = FALSE]) #nolint
   }
   return(currentNodeClasses)
 }

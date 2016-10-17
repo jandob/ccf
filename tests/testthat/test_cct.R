@@ -49,7 +49,8 @@ test_that("cct 3d with projection bootstrap", {
             4 * ones(nrow(diagonal), 1))
   X = as.matrix(X)
   set.seed(42)
-  cct = canonical_correlation_tree(X, one_hot_encode(Y), projectionBootstrap = TRUE)
+  cct = canonical_correlation_tree(
+    X, one_hot_encode(Y), projectionBootstrap = TRUE)
   error_cct = get_missclassification_rate(cct, cbind(X, Y))
   expect_that(error_cct, equals(0))
 })
@@ -59,8 +60,8 @@ test_that("cct spiral with projection bootstrap", {
   colnames(d) <- c("x", "y", "z")
   d$z <- as.factor(d$z)
 
-  d_train <- d[1:100,]
-  d_test <- d[101:1000,]
+  d_train <- d[1:100, ]
+  d_test <- d[101:1000, ]
 
   # convert to matrices
   X <- cbind(d_train$x, d_train$y)
@@ -68,7 +69,8 @@ test_that("cct spiral with projection bootstrap", {
 
   set.seed(42)
 
-  cct = canonical_correlation_tree(X, one_hot_encode(Y), projectionBootstrap = TRUE)
+  cct = canonical_correlation_tree(
+    X, one_hot_encode(Y), projectionBootstrap = TRUE)
   error_cct <- get_missclassification_rate(cct, d_test)
   expect_true(error_cct < 0.38)
 })

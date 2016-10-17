@@ -52,21 +52,22 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
   x <- center_colmeans(x)
   y <- center_colmeans(y)
 
-  # QR decomposition (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
-  qr_decomp_x <- qr(x, tol = epsilon)
-  q_x <- qr.Q(qr_decomp_x)
-  r_x <- qr.R(qr_decomp_x)
-  p_x <- qr_decomp_x$pivot
-  rank_x <- qr_decomp_x$rank
+  # QR decomposition
+  # (https://cran.r-project.org/doc/contrib/Hiebeler-matlabR.pdf)
+  qrDecompX <- qr(x, tol = epsilon)
+  qX <- qr.Q(qrDecompX)
+  rX <- qr.R(qrDecompX)
+  pX <- qrDecompX$pivot
+  rankX <- qrDecompX$rank
 
-  qr_decomp_y <- qr(y, tol = epsilon)
-  q_y <- qr.Q(qr_decomp_y)
-  r_y <- qr.R(qr_decomp_y)
-  p_y <- qr_decomp_y$pivot
-  rank_y <- qr_decomp_y$rank
+  qrDecomp <- qr(y, tol = epsilon)
+  qY <- qr.Q(qrDecomp)
+  rY <- qr.R(qrDecomp)
+  pY <- qrDecomp$pivot
+  rankY <- qrDecomp$rank
 
   # reduce Q and R to full rank
-  if (rank_x == 0) {
+  if (rankX == 0) {
     matrixA = matrix(0, ncol(x), 1)
     matrixA[1, ] = 1
     return(list(xcoef = matrixA,
@@ -75,25 +76,25 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
     )
   }
 
-  if (rank_x < ncol(x)) {
-    q_x <- q_x[, 1:rank_x]
+  if (rankX < ncol(x)) {
+    qX <- qX[, 1:rankX]
   }
-  r_x <- r_x[1:rank_x, 1:rank_x]
-  if (rank_y < ncol(y)) {
-    q_y <- q_y[, 1:rank_y]
+  rX <- rX[1:rankX, 1:rankX]
+  if (rankY < ncol(y)) {
+    qY <- qY[, 1:rankY]
   }
-  r_y <- r_y[1:rank_y,1:rank_y]
+  rY <- rY[1:rankY, 1:rankY]
 
-  number_of_coefficient_pairs = min(rank_x, rank_y)
+  numberOfCoefficientPairs = min(rankX, rankY)
 
   # select which decomposition is faster
-  if (rank_x >= rank_y) {
-    svd <- svd(t(q_x) %*% q_y)
+  if (rankX >= rankY) {
+    svd <- svd(t(qX) %*% qY)
     L <- svd$u
     D <- svd$d
     M <- svd$v
   } else {
-    svd <- svd(t(q_y) %*% q_x)
+    svd <- svd(t(qY) %*% qX)
     M <- svd$u
     D <- svd$d
     L <- svd$v
@@ -101,18 +102,18 @@ canonical_correlation_analysis <- function(x, y, epsilon = 1e-4) {
 
   # Remove meaningless components in L and M
   # Note solve(x) == x^-1
-  A <- solve(r_x) %*% L[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1)
-  B <- solve(r_y) %*% M[, 1:number_of_coefficient_pairs] * sqrt(nrow(x) - 1)
+  A <- solve(rX) %*% L[, 1:numberOfCoefficientPairs] * sqrt(nrow(x) - 1)
+  B <- solve(rY) %*% M[, 1:numberOfCoefficientPairs] * sqrt(nrow(x) - 1)
 
   # restore full size
-  A <- rbind(A, matrix(0, ncol(x) - rank_x, number_of_coefficient_pairs))
-  B <- rbind(B, matrix(0, ncol(y) - rank_y, number_of_coefficient_pairs))
+  A <- rbind(A, matrix(0, ncol(x) - rankX, numberOfCoefficientPairs))
+  B <- rbind(B, matrix(0, ncol(y) - rankY, numberOfCoefficientPairs))
 
   correlations <- diag(D)
 
   # restore order
-  A = A[p_x, , drop = FALSE]
-  B = B[p_y, , drop = FALSE]
+  A = A[pX, , drop = FALSE] #nolint
+  B = B[pY, , drop = FALSE] #nolint
 
   # normalize
   A = scale(A, center = FALSE, scale = sqrt(colSums(A ^ 2)))

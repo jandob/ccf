@@ -5,7 +5,7 @@ random_element <- function(x) {
   return(x)
 }
 
-eps <- 1 - 3 * ((4 / 3) - 1)
+eps <- 1 - 3 * ( (4 / 3) - 1)
 
 #' @importFrom stats model.matrix
 one_hot_encode <- function(data) {
@@ -21,7 +21,9 @@ one_hot_encode <- function(data) {
 }
 
 one_hot_decode <- function(X_one_hot) {
-  return(apply(X_one_hot, 1, function(row){which(row == 1)}))
+  return(apply(X_one_hot, 1, function(row){
+    which(row == 1)
+  }))
 }
 
 TODO <- function(message = "TODO", return = NULL) {
@@ -64,8 +66,6 @@ generate_2d_data_plot <- function(data = NULL,
                    color = as.character(data$z)),
       size = 2) +
     ggplot2::ggtitle(title)
-    #ggplot2::xlim(x_min, x_max) +
-    #ggplot2::ylim(y_min, y_max)
 
   return(g)
 }

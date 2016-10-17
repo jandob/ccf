@@ -45,9 +45,9 @@ canonical_correlation_forest = function(x, y = NULL,
 
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.default = function(x, y = NULL,
-                                                ntree = 200, verbose = FALSE,
-                                                projectionBootstrap = FALSE, ...) {
+canonical_correlation_forest.default =
+    function(x, y = NULL, ntree = 200, verbose = FALSE,
+             projectionBootstrap = FALSE, ...) {
   forest <- vector(mode = "list", length = ntree)
 
   if (is.null(y)) {
@@ -70,14 +70,14 @@ canonical_correlation_forest.default = function(x, y = NULL,
       cat("Training tree", i, "of", ntree, "\n")
     }
 
-    if (!projectionBootstrap) { # use (breiman's) tree bagging
-
+    if (!projectionBootstrap) {
+      # use (breiman's) tree bagging
       sample_idx <- sample(nrow(x), size = nrow(x), replace = TRUE)
-      x_bag <- x[sample_idx, , drop = FALSE]
+      x_bag <- x[sample_idx, , drop = FALSE] #nolint
       if (is.vector(y_use)) {
         y_bag <- y_use[sample_idx, drop = FALSE]
       } else {
-        y_bag <- y_use[sample_idx, , drop = FALSE]
+        y_bag <- y_use[sample_idx, , drop = FALSE] #nolint
       }
     } else {
       # use projection bootstrapping; no sampling needed
@@ -85,8 +85,8 @@ canonical_correlation_forest.default = function(x, y = NULL,
       y_bag <- y_use
     }
 
-    forest[[i]] <- canonical_correlation_tree(x_bag, y_bag,
-                                              projectionBootstrap = projectionBootstrap)
+    forest[[i]] <- canonical_correlation_tree(
+        x_bag, y_bag, projectionBootstrap = projectionBootstrap)
   }
 
   model <- structure(list(x = x, y = y, y_encoded = y_encoded,
@@ -98,7 +98,8 @@ canonical_correlation_forest.default = function(x, y = NULL,
 #' @importFrom stats model.frame model.response model.matrix
 #' @rdname ccf
 #' @export
-canonical_correlation_forest.formula = function(x, y = NULL, ntree = 200, verbose = FALSE, ...) {
+canonical_correlation_forest.formula = function(
+    x, y = NULL, ntree = 200, verbose = FALSE, ...) {
   formula <- x
   data <- y
 
@@ -134,7 +135,8 @@ canonical_correlation_forest.formula = function(x, y = NULL, ntree = 200, verbos
 #' @param ... Additional parameters passed on to prediction from individual
 #' canonical correlation trees.
 #' @export
-predict.canonical_correlation_forest = function(object, newdata, verbose = FALSE, ...) {
+predict.canonical_correlation_forest = function(
+    object, newdata, verbose = FALSE, ...) {
   if (missing(newdata)) {
     stop("Argument 'newdata' is missing.")
   }
@@ -155,7 +157,9 @@ predict.canonical_correlation_forest = function(object, newdata, verbose = FALSE
     cat("\nMajority vote")
   }
 
-  treePredictions <- apply(treePredictions, 1, function(row) { names(which.max(table(row)))})
+  treePredictions <- apply(treePredictions, 1, function(row) {
+    names(which.max(table(row)))
+  })
 
   return(treePredictions)
 }
