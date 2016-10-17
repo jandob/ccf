@@ -144,19 +144,17 @@ predict.canonical_correlation_forest = function(
   ntree <- length(object$forest)
   treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
 
-  # TODO: make more efficient with apply or dplyr
-  for (i in 1:ntree) {
-    if (verbose) {
-      cat("Prediction", i, "of", ntree, "\n")
-    }
-
-    treePredictions[, i] <- predict(object$forest[[i]], newdata, ...)
-  }
 
   if (verbose) {
-    cat("\nMajority vote")
+      cat("calculating predictions\n")
   }
-
+  # returns list of list
+  treePredictions = lapply(object$forest, predict, newdata)
+  # convert to matrix
+  treePredictions = do.call(cbind, treePredictions)
+  if (verbose) {
+    cat("Majority vote\n")
+  }
   treePredictions <- apply(treePredictions, 1, function(row) {
     names(which.max(table(row)))
   })
