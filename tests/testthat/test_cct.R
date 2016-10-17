@@ -63,7 +63,7 @@ test_that("cct spiral with projection bootstrap", {
   d_test <- d[101:1000,]
 
   # convert to matrices
-  X <- cbind(d_train$x,d_train$y)
+  X <- cbind(d_train$x, d_train$y)
   Y <- d_train$z
 
   set.seed(42)

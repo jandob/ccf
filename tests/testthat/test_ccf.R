@@ -17,3 +17,22 @@ test_that("ccf 2d", {
   error_ccf = get_missclassification_rate(ccf, cbind(X, Y))
   expect_that(error_ccf, equals(0))
 })
+test_that("ccf spiral with projection bootstrap", {
+  data(spirals)
+  d <- spirals
+  colnames(d) <- c("x", "y", "z")
+  d$z <- as.factor(d$z)
+
+  d_train <- d[1:100,]
+  d_test <- d[101:1000,]
+
+  # convert to matrices
+  X <- cbind(d_train$x, d_train$y)
+  Y <- d_train$z
+
+  set.seed(42)
+
+  ccf = canonical_correlation_forest(X, one_hot_encode(Y), projectionBootstrap = TRUE)
+  error_cct <- get_missclassification_rate(ccf, d_test)
+  expect_true(error_cct < 0.13)
+})
