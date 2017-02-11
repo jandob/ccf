@@ -28,11 +28,11 @@
 #' ## variant 1: matrix input
 #' m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 20)
 #' ## variant 2: formula notation
-#' #m2 <- canonical_correlation_forest(class ~ ., d_train)
+#' m2 <- canonical_correlation_forest(class ~ ., d_train)
 #'
 #' # compute predictive accuracy
 #' get_missclassification_rate(m1, d_test)
-#' #get_missclassification_rate(m2, d_test)
+#' get_missclassification_rate(m2, d_test)
 #' @references Rainforth, T., and Wood, F. (2015): Canonical correlation forest,
 #' arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
 #' @rdname ccf
@@ -103,25 +103,17 @@ canonical_correlation_forest.formula = function(
   formula <- x
   data <- y
 
-  # TODO: by default, take the data from formula object
-  if (is.null(data)) {
-    stop("CCF based on formula requires a data attribute.")
-  }
-
-  #TODO: what are the comments good for?
-
-  #m = match.call(expand.dots = FALSE)
   if (is.matrix(data)) {
     data <- as.data.frame(data)
   }
-  # remove intercept, TODO what is it good for, regression? ...
 
   model_frame <- model.frame(formula, data = data)
 
-  x = model.matrix(model.frame)
+  x = as.matrix(model.matrix(formula, data = model_frame))
+  x = x[,-1] # remove intercept
   y = model.response(model_frame)
 
-  canonical_correlation_forest.default(x, y, ...)
+  canonical_correlation_forest.default(x, y, ntree = ntree, verbose = verbose, ...)
 }
 
 #' Prediction from canonical correlation forest

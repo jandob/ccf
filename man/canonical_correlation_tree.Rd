@@ -51,4 +51,3 @@ where the object is a list containing at the following components:
 \description{
 This function computes a single canonical correlation tree given its input values.
 }
-

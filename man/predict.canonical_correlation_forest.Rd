@@ -22,4 +22,3 @@ canonical correlation trees.}
 \description{
 Performs predictions on test data for a trained canonical correlation forest.
 }
-

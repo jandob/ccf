@@ -25,4 +25,3 @@ don't interpolate.}
 \description{
 This function generates a plot (ggplot2) of the decision surface for a 2d classifier.
 }
-

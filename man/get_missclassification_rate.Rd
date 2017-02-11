@@ -18,4 +18,3 @@ get_missclassification_rate(model, data_test, ...)
 \description{
 Helper function to print prediction accuracy for a model.
 }
-

@@ -37,3 +37,21 @@ test_that("ccf spiral with projection bootstrap", {
   error_ccf <- get_missclassification_rate(ccf, d_test)
   expect_true(error_ccf < 0.29)
 })
+
+test_that("ccf formula", {
+  diagonal = as.data.frame(rbind(c(0, 0), c(1, 1), c(2, 2)))
+  colnames(diagonal) = c("x", "y")
+  diagonal_upper = diagonal_lower = diagonal
+  diagonal_upper$y = diagonal$y + 1
+  diagonal_lower$x = diagonal$x + 1
+  X = rbind(diagonal, diagonal_upper, diagonal_lower)
+  Y = rbind(1 * ones(nrow(diagonal), 1),
+            2 * ones(nrow(diagonal), 1),
+            3 * ones(nrow(diagonal), 1))
+  set.seed(42)
+  Y = as.factor(Y)
+  d_train = data.frame(Y, X)
+  ccf = canonical_correlation_forest(Y ~ ., d_train, ntree = 10)
+  error_ccf = get_missclassification_rate(ccf, cbind(X, Y))
+  expect_that(error_ccf, equals(0))
+})

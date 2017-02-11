@@ -54,14 +54,13 @@ d_test <- spirals[-(1:1000), ]
 ## variant 1: matrix input
 m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 20)
 ## variant 2: formula notation
-#m2 <- canonical_correlation_forest(class ~ ., d_train)
+m2 <- canonical_correlation_forest(class ~ ., d_train)
 
 # compute predictive accuracy
 get_missclassification_rate(m1, d_test)
-#get_missclassification_rate(m2, d_test)
+get_missclassification_rate(m2, d_test)
 }
 \references{
 Rainforth, T., and Wood, F. (2015): Canonical correlation forest,
 arXiv preprint, arXiv:1507.05444, \url{https://arxiv.org/pdf/1507.05444.pdf}.
 }
-

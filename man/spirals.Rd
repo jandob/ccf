@@ -21,4 +21,3 @@ data(spirals)
 A dataset containing 3 interwinding spirals.
 }
 \keyword{datasets}
-

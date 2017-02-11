@@ -80,15 +80,15 @@ d_test <- tail(spirals, 1000)
 ## variant 1: matrix input
 m1 <- canonical_correlation_forest(d_train[, c("x", "y")], d_train$class, ntree = 10)
 ## variant 2: formula notation
-#m2 <- canonical_correlation_forest(class ~ ., d_train)
+m2 <- canonical_correlation_forest(class ~ ., d_train, ntree = 10)
 
 # compute predictive accuracy
-#get_missclassification_rate(m1, d_test)
-#get_missclassification_rate(m2, d_test)
+get_missclassification_rate(m1, d_test)
+get_missclassification_rate(m2, d_test)
 
 # plot the decision surface of the classifier
 ccf_plot <- plot_decision_surface(
-  m1, d_test[, c("x", "y")], d_test$class, title = "CCF with 20 trees")
+  m1, d_test[, c("x", "y")], d_test$class, title = "CCF with 10 trees")
 ```
 
 ## License

@@ -44,4 +44,3 @@ X <- mvrnorm(1000, mu = c(1, 2),
 cca <- canonical_correlation_analysis(X, X)
 cca
 }
-
