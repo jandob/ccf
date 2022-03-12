@@ -257,10 +257,16 @@ canonical_correlation_tree = function(
 }
 
 #' @export
-predict.canonical_correlation_tree = function(object, newData, ...){
+predict.canonical_correlation_tree = function(object, newData, prob = FALSE, ...){
   tree = object
   if (tree$isLeaf) {
-    return(tree$classIndex)
+    if(prob){
+      #todo: make more flexible
+      #hardcoded to class1 right now
+      return(tree$trainingCounts[names(tree$trainingCounts) == "class1"]/sum(tree$trainingCounts))
+    }else{
+      return(tree$classIndex)
+    }
   }
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
