@@ -164,7 +164,7 @@ predict_prob.canonical_correlation_forest = function(
   ntree <- length(object$forest)
   treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
   
-  if (length(unique(object$y)) > 2 {
+  if (length(unique(object$y)) > 2 ){
     stop("predict_prob currently only implemented for binary classifier. More than two classes detected")
   }  
   
