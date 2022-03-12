@@ -6,14 +6,18 @@
 \alias{canonical_correlation_forest.formula}
 \title{Canonical correlation forest}
 \usage{
-canonical_correlation_forest(x, y = NULL, ntree = 200, verbose = FALSE,
-  ...)
+canonical_correlation_forest(x, y = NULL, ntree = 200, verbose = FALSE, ...)
 
-\method{canonical_correlation_forest}{default}(x, y = NULL, ntree = 200,
-  verbose = FALSE, projectionBootstrap = FALSE, ...)
+\method{canonical_correlation_forest}{default}(
+  x,
+  y = NULL,
+  ntree = 200,
+  verbose = FALSE,
+  projectionBootstrap = FALSE,
+  ...
+)
 
-\method{canonical_correlation_forest}{formula}(x, y = NULL, ntree = 200,
-  verbose = FALSE, ...)
+\method{canonical_correlation_forest}{formula}(x, y = NULL, ntree = 200, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{Numeric matrix (n * p) with n observations of p variables}

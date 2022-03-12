@@ -154,36 +154,7 @@ predict.canonical_correlation_forest = function(
   return(treePredictions)
 }
 
-#' @export
-predict_prob2.canonical_correlation_forest = function(
-  object, newdata, verbose = FALSE, ...) {
-  if (missing(newdata)) {
-    stop("Argument 'newdata' is missing.")
-  }
-  
-  ntree <- length(object$forest)
-  treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
-  
-  if (length(unique(object$y)) > 2 ){
-    stop("predict_prob currently only implemented for binary classifier. More than two classes detected")
-  }  
-  
-  if (verbose) {
-    cat("calculating predictions\n")
-  }
-  # returns list of list
-  treePredictions = lapply(object$forest, predict, newdata)
-  # convert to matrix
-  treePredictions = do.call(cbind, treePredictions)
-  if (verbose) {
-    cat("Majority vote\n")
-  }
-  probs <- apply(treePredictions, 1, function(row) {
-    sum(table(row) == "1")/ntree #hardcoded to count predictions with class name "1"
-  })
-  
-  return(probs)
-}
+#' @method predict_prob canonical_correlation_forest
 #' @export
 predict_prob.canonical_correlation_forest = function(
   object, newdata, verbose = FALSE, ...) {

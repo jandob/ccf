@@ -4,8 +4,7 @@
 \alias{predict.canonical_correlation_forest}
 \title{Prediction from canonical correlation forest}
 \usage{
-\method{predict}{canonical_correlation_forest}(object, newdata,
-  verbose = FALSE, ...)
+\method{predict}{canonical_correlation_forest}(object, newdata, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of class \code{canonical_correlation_forest}, as created
