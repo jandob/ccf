@@ -124,19 +124,15 @@ canonical_correlation_forest.formula = function(
 #' @param newdata A data frame or a matrix containing the test data.
 #' @param verbose Optional argument to control if additional information are
 #' printed to the output. Default is \code{FALSE}.
-#' @param prob boolean specifying whether to return probabilities 
+#' @param probClass Optional argument specifying name of class to compute probabilities for 
 #' @param ... Additional parameters passed on to prediction from individual
 #' canonical correlation trees.
 #' @export
 predict.canonical_correlation_forest = function(
-    object, newdata, verbose = FALSE, prob = FALSE, ...) {
+    object, newdata, verbose = FALSE, probClass = NULL, ...) {
   if (missing(newdata)) {
     stop("Argument 'newdata' is missing.")
   }
-
-  if (prob == TRUE && length(unique(object$y)) > 2 ){
-    stop("predict with prob == TRUE currently only implemented for binary classifier. More than two classes detected")
-  }  
 
   ntree <- length(object$forest)
   treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
@@ -147,11 +143,14 @@ predict.canonical_correlation_forest = function(
   }
 
   # returns list of list
-  treePredictions = lapply(object$forest, predict, newdata, prob = prob)
+  treePredictions = lapply(object$forest, predict, newdata, probClass = probClass)
   # convert to matrix
   treePredictions = do.call(cbind, treePredictions)
 
-  if(prob){
+  if(!is.null(probClass)){
+    if (verbose) {
+      cat("Mean probability\n")
+    }
     return(rowMeans(treePredictions))
   }else{
     if (verbose) {

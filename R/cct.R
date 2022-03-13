@@ -257,13 +257,11 @@ canonical_correlation_tree = function(
 }
 
 #' @export
-predict.canonical_correlation_tree = function(object, newData, prob = FALSE, ...){
+predict.canonical_correlation_tree = function(object, newData, probClass = NULL, ...){
   tree = object
   if (tree$isLeaf) {
-    if(prob){
-      #todo: make more flexible
-      #hardcoded to class1 right now
-      return(tree$trainingCounts[names(tree$trainingCounts) == "class1"]/sum(tree$trainingCounts))
+    if(!is.null(probClass)){
+      return(tree$trainingCounts[names(tree$trainingCounts) == probClass]/sum(tree$trainingCounts))
     }else{
       return(tree$classIndex)
     }
@@ -283,12 +281,12 @@ predict.canonical_correlation_tree = function(object, newData, prob = FALSE, ...
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refLeftChild,
-                                       X[lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
+                                       X[lessThanPartPoint, ,drop = FALSE], probClass = probClass) #nolint
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refRightChild,
-                                       X[!lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
+                                       X[!lessThanPartPoint, ,drop = FALSE], probClass = probClass) #nolint
   }
   return(currentNodeClasses)
 }
