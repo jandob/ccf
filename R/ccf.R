@@ -146,24 +146,14 @@ predict.canonical_correlation_forest = function(
       cat("calculating predictions\n")
   }
 
+  # returns list of list
+  treePredictions = lapply(object$forest, predict, newdata, prob = prob)
+  # convert to matrix
+  treePredictions = do.call(cbind, treePredictions)
+
   if(prob){
-    # returns list of list
-    treePredictions = lapply(object$forest, predict, newdata, prob = TRUE)
-    # convert to matrix
-    treePredictions = do.call(cbind, treePredictions)
-
-    # todo: use built in function
-    probs <- apply(treePredictions, 1, function(row) {
-      mean(table(row)) 
-    })
-    
-    return(probs)
-
+    return(rowMeans(treePredictions))
   }else{
-    # returns list of list
-    treePredictions = lapply(object$forest, predict, newdata)
-    # convert to matrix
-    treePredictions = do.call(cbind, treePredictions)
     if (verbose) {
       cat("Majority vote\n")
     }
