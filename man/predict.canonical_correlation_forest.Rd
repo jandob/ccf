@@ -4,8 +4,7 @@
 \alias{predict.canonical_correlation_forest}
 \title{Prediction from canonical correlation forest}
 \usage{
-\method{predict}{canonical_correlation_forest}(object, newdata,
-  verbose = FALSE, ...)
+\method{predict}{canonical_correlation_forest}(object, newdata, verbose = FALSE, probClass = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class \code{canonical_correlation_forest}, as created
@@ -15,6 +14,8 @@ by the function \code{\link{canonical_correlation_forest}}.}
 
 \item{verbose}{Optional argument to control if additional information are
 printed to the output. Default is \code{FALSE}.}
+
+\item{probClass}{Optional argument specifying name of class to compute probabilities for}
 
 \item{...}{Additional parameters passed on to prediction from individual
 canonical correlation trees.}

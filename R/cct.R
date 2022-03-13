@@ -257,10 +257,14 @@ canonical_correlation_tree = function(
 }
 
 #' @export
-predict.canonical_correlation_tree = function(object, newData, ...){
+predict.canonical_correlation_tree = function(object, newData, probClass = NULL, ...){
   tree = object
   if (tree$isLeaf) {
-    return(tree$classIndex)
+    if(!is.null(probClass)){
+      return(tree$trainingCounts[names(tree$trainingCounts) == probClass]/sum(tree$trainingCounts))
+    }else{
+      return(tree$classIndex)
+    }
   }
   nr_of_features = length(tree$decisionProjection)
   # TODO use formula instead of all but last column
@@ -277,12 +281,12 @@ predict.canonical_correlation_tree = function(object, newData, ...){
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refLeftChild,
-                                       X[lessThanPartPoint, ,drop = FALSE]) #nolint
+                                       X[lessThanPartPoint, ,drop = FALSE], probClass = probClass) #nolint
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refRightChild,
-                                       X[!lessThanPartPoint, ,drop = FALSE]) #nolint
+                                       X[!lessThanPartPoint, ,drop = FALSE], probClass = probClass) #nolint
   }
   return(currentNodeClasses)
 }

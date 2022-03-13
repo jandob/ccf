@@ -4,9 +4,16 @@
 \alias{canonical_correlation_tree}
 \title{Computes a canonical correlation tree}
 \usage{
-canonical_correlation_tree(X, Y, depth = 0, minPointsForSplit = 2,
-  maxDepthSplit = Inf, xVariationTolerance = 1e-10,
-  projectionBootstrap = FALSE, ancestralProbs = NULL)
+canonical_correlation_tree(
+  X,
+  Y,
+  depth = 0,
+  minPointsForSplit = 2,
+  maxDepthSplit = Inf,
+  xVariationTolerance = 1e-10,
+  projectionBootstrap = FALSE,
+  ancestralProbs = NULL
+)
 }
 \arguments{
 \item{X}{Predictor matrix of size \eqn{n \times p} with \eqn{n} observations and \eqn{p}

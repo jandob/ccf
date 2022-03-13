@@ -124,13 +124,20 @@ canonical_correlation_forest.formula = function(
 #' @param newdata A data frame or a matrix containing the test data.
 #' @param verbose Optional argument to control if additional information are
 #' printed to the output. Default is \code{FALSE}.
+#' @param probClass Optional argument specifying name of class to compute probabilities for 
 #' @param ... Additional parameters passed on to prediction from individual
 #' canonical correlation trees.
 #' @export
 predict.canonical_correlation_forest = function(
-    object, newdata, verbose = FALSE, ...) {
+    object, newdata, verbose = FALSE, probClass = NULL, ...) {
   if (missing(newdata)) {
     stop("Argument 'newdata' is missing.")
+  }
+  if(!is.null(probClass)){
+    classNames = names(m1$forest[[1]]$trainingCounts)
+    if(!(probClass %in% classNames)){
+      stop(paste0("Argument probClass = ", probClass, " is not in list of class names. Options are: ", paste(classNames, collapse = ', ')))
+    }
   }
 
   ntree <- length(object$forest)
@@ -140,19 +147,29 @@ predict.canonical_correlation_forest = function(
   if (verbose) {
       cat("calculating predictions\n")
   }
+
   # returns list of list
-  treePredictions = lapply(object$forest, predict, newdata)
+  treePredictions = lapply(object$forest, predict, newdata, probClass = probClass)
   # convert to matrix
   treePredictions = do.call(cbind, treePredictions)
-  if (verbose) {
-    cat("Majority vote\n")
-  }
-  treePredictions <- apply(treePredictions, 1, function(row) {
-    names(which.max(table(row)))
-  })
 
-  return(treePredictions)
+  if(!is.null(probClass)){
+    if (verbose) {
+      cat("Mean probability\n")
+    }
+    return(rowMeans(treePredictions))
+  }else{
+    if (verbose) {
+      cat("Majority vote\n")
+    }
+    treePredictions <- apply(treePredictions, 1, function(row) {
+      names(which.max(table(row)))
+    })
+
+    return(treePredictions)
+  }
 }
+
 
 #' Visualization of canonical correlation forest
 #'
