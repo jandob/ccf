@@ -15,6 +15,8 @@ by the function \code{\link{canonical_correlation_forest}}.}
 \item{verbose}{Optional argument to control if additional information are
 printed to the output. Default is \code{FALSE}.}
 
+\item{prob}{boolean specifying whether to return probabilities}
+
 \item{...}{Additional parameters passed on to prediction from individual
 canonical correlation trees.}
 }

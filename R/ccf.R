@@ -124,6 +124,7 @@ canonical_correlation_forest.formula = function(
 #' @param newdata A data frame or a matrix containing the test data.
 #' @param verbose Optional argument to control if additional information are
 #' printed to the output. Default is \code{FALSE}.
+#' @param prob boolean specifying whether to return probabilities 
 #' @param ... Additional parameters passed on to prediction from individual
 #' canonical correlation trees.
 #' @export
@@ -174,33 +175,6 @@ predict.canonical_correlation_forest = function(
   }
 }
 
-#' @export
-predict_proba.canonical_correlation_forest = function(
-  object, newdata, verbose = FALSE, ...) {
-  if (missing(newdata)) {
-    stop("Argument 'newdata' is missing.")
-  }
-  
-  ntree <- length(object$forest)
-  treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
-  
-  
-  if (verbose) {
-    cat("calculating predictions\n")
-  }
-  # returns list of list
-  treePredictions = lapply(object$forest, predict, newdata)
-  # convert to matrix
-  treePredictions = do.call(cbind, treePredictions)
-  if (verbose) {
-    cat("Majority vote\n")
-  }
-  probs <- apply(treePredictions, 1, function(row) {
-    sum(table(row) == "1")/ntree #hardcoded to count predictions with class name "1"
-  })
-  
-  return(probs)
-}
 
 #' Visualization of canonical correlation forest
 #'
