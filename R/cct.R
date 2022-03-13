@@ -283,12 +283,12 @@ predict.canonical_correlation_tree = function(object, newData, prob = FALSE, ...
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refLeftChild,
-                                       X[lessThanPartPoint, ,drop = FALSE]) #nolint
+                                       X[lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint, ] =
       predict.canonical_correlation_tree(tree$refRightChild,
-                                       X[!lessThanPartPoint, ,drop = FALSE]) #nolint
+                                       X[!lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
   }
   return(currentNodeClasses)
 }
