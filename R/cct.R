@@ -282,12 +282,12 @@ predict.canonical_correlation_tree = function(object, newData, prob = FALSE, ...
   currentNodeClasses = matrix(nrow = max(nrow(X), 1))
   if (any(lessThanPartPoint)) {
     currentNodeClasses[lessThanPartPoint, ] =
-      predict(tree$refLeftChild,
+      predict.canonical_correlation_tree(tree$refLeftChild,
                                        X[lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
   }
   if (any(!lessThanPartPoint)) {
     currentNodeClasses[!lessThanPartPoint, ] =
-      predict(tree$refRightChild,
+      predict.canonical_correlation_tree(tree$refRightChild,
                                        X[!lessThanPartPoint, ,drop = FALSE], prob = prob) #nolint
   }
   return(currentNodeClasses)
