@@ -133,6 +133,12 @@ predict.canonical_correlation_forest = function(
   if (missing(newdata)) {
     stop("Argument 'newdata' is missing.")
   }
+  if(!is.null(probClass)){
+    classNames = names(m1$forest[[1]]$trainingCounts)
+    if(!(probClass %in% classNames)){
+      stop(paste0("Argument probClass = ", probClass, " is not in list of class names. Options are: ", paste(classNames, collapse = ', ')))
+    }
+  }
 
   ntree <- length(object$forest)
   treePredictions <- matrix(NA, nrow = nrow(newdata), ncol = ntree)
